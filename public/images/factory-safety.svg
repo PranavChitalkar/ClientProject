@@ -1,0 +1,20 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="720" fill="#EAF8FF"/>
+  <rect y="520" width="1200" height="200" fill="#D7E7EE"/>
+  <rect x="90" y="230" width="1020" height="280" rx="26" fill="#EFF5F8" stroke="#C7D8E0" stroke-width="8"/>
+  <rect x="140" y="280" width="160" height="120" rx="14" fill="#B8CFD9"/>
+  <rect x="350" y="280" width="160" height="120" rx="14" fill="#B8CFD9"/>
+  <rect x="560" y="280" width="160" height="120" rx="14" fill="#B8CFD9"/>
+  <rect x="770" y="280" width="160" height="120" rx="14" fill="#B8CFD9"/>
+  <rect x="975" y="235" width="60" height="275" fill="#AFC3CB"/>
+  <path d="M90 230L230 160L370 230H90Z" fill="#9BB5BF"/>
+  <path d="M330 230L470 160L610 230H330Z" fill="#9BB5BF"/>
+  <path d="M570 230L710 160L850 230H570Z" fill="#9BB5BF"/>
+  <rect x="145" y="120" width="240" height="110" rx="18" fill="#FFC53D" stroke="white" stroke-width="16"/>
+  <text x="195" y="183" fill="#1D2A30" font-family="Segoe UI, sans-serif" font-size="38" font-weight="700">PPE ZONE</text>
+  <rect x="175" y="228" width="10" height="120" rx="5" fill="#E9F2F5"/>
+  <rect x="340" y="228" width="10" height="120" rx="5" fill="#E9F2F5"/>
+  <circle cx="905" cy="175" r="58" fill="#36CFC9"/>
+  <rect x="845" y="250" width="145" height="95" rx="18" fill="#23A6F0" stroke="white" stroke-width="14"/>
+  <text x="873" y="305" fill="white" font-family="Segoe UI, sans-serif" font-size="28" font-weight="700">SAFE</text>
+</svg>

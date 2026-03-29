@@ -1,0 +1,20 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="720" fill="#DFF4FF"/>
+  <rect y="420" width="1200" height="300" fill="#26323A"/>
+  <rect x="160" y="520" width="880" height="18" rx="9" fill="#FFC93C"/>
+  <rect x="100" y="542" width="120" height="10" rx="5" fill="#FFF5CC"/>
+  <rect x="300" y="542" width="120" height="10" rx="5" fill="#FFF5CC"/>
+  <rect x="500" y="542" width="120" height="10" rx="5" fill="#FFF5CC"/>
+  <rect x="700" y="542" width="120" height="10" rx="5" fill="#FFF5CC"/>
+  <rect x="900" y="542" width="120" height="10" rx="5" fill="#FFF5CC"/>
+  <rect x="280" y="170" width="430" height="180" rx="24" fill="#1699D3" stroke="white" stroke-width="20"/>
+  <rect x="355" y="350" width="18" height="130" rx="9" fill="#E8F2F6"/>
+  <rect x="610" y="350" width="18" height="130" rx="9" fill="#E8F2F6"/>
+  <text x="340" y="245" fill="white" font-family="Segoe UI, sans-serif" font-size="46" font-weight="700">EXIT 24</text>
+  <text x="340" y="300" fill="#DDF5FF" font-family="Segoe UI, sans-serif" font-size="28" font-weight="600">Industrial Corridor</text>
+  <path d="M590 260H655" stroke="white" stroke-width="18" stroke-linecap="round"/>
+  <path d="M640 228L675 260L640 292" stroke="white" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="1030" cy="120" r="60" fill="#FFE082"/>
+  <path d="M0 420C133 362 280 344 420 362C560 380 690 450 850 445C1010 440 1110 383 1200 332V420H0Z" fill="#A8D5BA"/>
+  <path d="M0 455C110 415 251 405 394 430C537 455 687 525 857 525C1027 525 1118 463 1200 423V720H0Z" fill="#7FB685"/>
+</svg>
