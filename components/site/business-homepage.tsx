@@ -1,18 +1,22 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "motion/react";
+import { useEffect, useMemo, useState } from "react";
 import {
   company,
-  companyOverview,
   contactOptions,
-  highlights,
   process,
-  projects,
-  reasons,
-  sectors,
   services,
   stats,
 } from "@/data/site-content";
+import {
+  websiteProducts,
+  websiteWorks,
+  type Product,
+  type WebWork,
+} from "@/data/web-catalog";
+import { getStoredProducts, getStoredWorks } from "@/data/web-storage";
 
 function Container({
   children,
@@ -52,35 +56,20 @@ function SectionTitle({
 
 function FloatingBackground() {
   return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 overflow-hidden"
-    >
-      <div className="absolute inset-x-0 top-0 h-[42rem] bg-[radial-gradient(circle_at_top_left,rgba(14,165,233,0.16),transparent_28%),radial-gradient(circle_at_top_right,rgba(250,204,21,0.28),transparent_24%),linear-gradient(180deg,#f8fcff_0%,#eef7ff_46%,#ffffff_100%)]" />
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="absolute inset-x-0 top-0 h-[44rem] bg-[radial-gradient(circle_at_top_left,rgba(14,165,233,0.16),transparent_28%),radial-gradient(circle_at_top_right,rgba(250,204,21,0.24),transparent_24%),linear-gradient(180deg,#f8fcff_0%,#eef7ff_44%,#ffffff_100%)]" />
       <div className="absolute left-[-8rem] top-24 h-72 w-72 rounded-full bg-sky-200/50 blur-3xl" />
       <div className="absolute right-[-6rem] top-16 h-80 w-80 rounded-full bg-amber-200/60 blur-3xl" />
-      <div className="absolute left-1/3 top-[28rem] h-56 w-56 rounded-full bg-cyan-100 blur-3xl" />
       <div className="hero-grid absolute inset-x-0 top-0 h-[44rem] opacity-50" />
-      <motion.div
-        className="absolute left-[10%] top-28 h-24 w-24 rounded-[2rem] border border-white/70 bg-white/70 shadow-xl shadow-sky-100"
-        animate={{ y: [0, -16, 0], rotate: [0, 4, 0] }}
-        transition={{ duration: 8, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute right-[12%] top-40 h-20 w-20 rounded-full border border-white/70 bg-gradient-to-br from-amber-200/80 to-white shadow-xl shadow-amber-100"
-        animate={{ y: [0, 18, 0], x: [0, -12, 0] }}
-        transition={{ duration: 10, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute bottom-24 left-0 right-0 mx-auto h-28 w-[88%] max-w-5xl rounded-full bg-gradient-to-r from-sky-100 via-white to-amber-100 blur-2xl"
-        animate={{ opacity: [0.6, 0.95, 0.6] }}
-        transition={{ duration: 6, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-      />
     </div>
   );
 }
 
-function HeroIllustration() {
+function ProductSpotlight({ featured }: { featured?: Product }) {
+  if (!featured) {
+    return null;
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 28 }}
@@ -88,86 +77,46 @@ function HeroIllustration() {
       transition={{ duration: 0.8, delay: 0.2 }}
       className="relative mx-auto w-full max-w-2xl"
     >
-      <div className="relative overflow-hidden rounded-[2rem] border border-sky-100 bg-white/80 p-5 shadow-[0_30px_100px_rgba(15,23,42,0.10)] backdrop-blur">
-        <div className="absolute inset-x-8 top-5 h-16 rounded-full bg-gradient-to-r from-sky-50 via-white to-amber-50" />
-        <div className="relative rounded-[1.5rem] border border-slate-100 bg-slate-50 p-5">
-          <div className="mb-4 flex items-center justify-between">
+      <div className="overflow-hidden rounded-[2rem] border border-sky-100 bg-white/85 p-5 shadow-[0_30px_100px_rgba(15,23,42,0.10)] backdrop-blur">
+        <div className="rounded-[1.5rem] border border-slate-100 bg-slate-50 p-5">
+          <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sky-700">
-                Highway and Industrial Signage
+                Featured Product
               </p>
-              <h3 className="mt-2 text-2xl font-semibold text-slate-900">
-                Boards built for safety, guidance, and compliance
-              </h3>
+              <h3 className="mt-2 text-2xl font-semibold text-slate-900">{featured.name}</h3>
+              <p className="mt-3 max-w-lg text-sm leading-7 text-slate-600">
+                {featured.shortDescription}
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <span className="rounded-full bg-sky-50 px-3 py-1.5 text-xs font-semibold text-sky-700">
+                  {featured.size}
+                </span>
+                <span className="rounded-full bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-800">
+                  {featured.pricing}
+                </span>
+              </div>
             </div>
             <div className="rounded-2xl bg-gradient-to-br from-amber-400 to-yellow-300 px-4 py-3 text-sm font-semibold text-slate-900">
               Since {company.since}
             </div>
           </div>
 
-          <div className="relative mt-8 overflow-hidden rounded-[1.5rem] border border-slate-200 bg-gradient-to-br from-sky-900 via-sky-800 to-cyan-700 px-6 py-10">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.18),transparent_24%),radial-gradient(circle_at_bottom_left,rgba(250,204,21,0.18),transparent_22%)]" />
-            <div className="relative mx-auto flex max-w-md flex-col items-center">
-              <div className="w-full rounded-[1.5rem] border-[10px] border-white bg-gradient-to-r from-sky-500 to-cyan-400 px-6 py-5 shadow-2xl">
-                <div className="flex items-center justify-between">
-                  <span className="rounded-full bg-white/20 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-white">
-                    Reflective Sign
-                  </span>
-                  <span className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-50">
-                    Direction Ahead
-                  </span>
-                </div>
-                <div className="mt-8 flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-sky-50">Industrial Access</p>
-                    <p className="mt-2 text-4xl font-semibold tracking-tight text-white">
-                      Zone B
-                    </p>
-                  </div>
-                  <div className="relative h-4 w-28 rounded-full bg-white/90">
-                    <span className="absolute right-0 top-1/2 h-5 w-5 -translate-y-1/2 rotate-45 border-r-[6px] border-t-[6px] border-white" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="h-24 w-4 rounded-full bg-slate-200" />
-
-              <div className="relative mt-2 h-40 w-full overflow-hidden rounded-[2rem] bg-slate-800">
-                <motion.div
-                  className="absolute left-[8%] right-[8%] top-1/2 h-16 -translate-y-1/2 rounded-[2rem] bg-slate-700"
-                  animate={{ scaleX: [1, 1.02, 1] }}
-                  transition={{
-                    duration: 5,
-                    repeat: Number.POSITIVE_INFINITY,
-                    ease: "easeInOut",
-                  }}
-                />
-                <motion.div
-                  className="absolute left-[16%] top-1/2 h-2 w-40 -translate-y-1/2 rounded-full bg-amber-300"
-                  animate={{ x: ["-12%", "145%"] }}
-                  transition={{
-                    duration: 2.2,
-                    repeat: Number.POSITIVE_INFINITY,
-                    ease: "linear",
-                  }}
-                />
-              </div>
+          <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white">
+            <div className="relative h-72 bg-slate-100">
+              <img src={featured.image} alt={featured.name} className="h-full w-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/15 to-transparent" />
             </div>
-          </div>
-
-          <div className="mt-5 grid gap-4 sm:grid-cols-3">
-            {[
-              "Road regulatory and caution boards",
-              "Factory hazard and PPE sign systems",
-              "Custom structure fabrication and fitting",
-            ].map((item) => (
-              <div
-                key={item}
-                className="rounded-2xl border border-slate-100 bg-white px-4 py-4 text-sm font-medium text-slate-600 shadow-sm"
-              >
-                {item}
-              </div>
-            ))}
+            <div className="grid gap-4 p-5 sm:grid-cols-3">
+              {featured.features.map((item) => (
+                <div
+                  key={item}
+                  className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-4 text-sm font-medium text-slate-600"
+                >
+                  {item}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -175,7 +124,84 @@ function HeroIllustration() {
   );
 }
 
+function ProductCard({ product, index }: { product: Product; index: number }) {
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.25 }}
+      transition={{ delay: index * 0.06, duration: 0.45 }}
+      className="group overflow-hidden rounded-[2rem] border border-white bg-white shadow-[0_20px_70px_rgba(15,23,42,0.06)] transition hover:-translate-y-1 hover:shadow-[0_24px_90px_rgba(14,165,233,0.14)]"
+    >
+      <div className="relative h-56 bg-slate-100">
+        <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/20 to-transparent" />
+      </div>
+
+      <div className="p-6">
+        <p className="text-sm font-semibold uppercase tracking-[0.22em] text-sky-700">
+          {product.category}
+        </p>
+        <h3 className="mt-3 text-2xl font-semibold text-slate-900">{product.name}</h3>
+        <p className="mt-4 text-base leading-8 text-slate-600">{product.shortDescription}</p>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          <div className="rounded-[1.25rem] border border-slate-100 bg-slate-50 px-4 py-3">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-sky-700">
+              Size
+            </p>
+            <p className="mt-2 text-sm text-slate-700">{product.size}</p>
+          </div>
+          <div className="rounded-[1.25rem] border border-slate-100 bg-slate-50 px-4 py-3">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-sky-700">
+              Starting Price
+            </p>
+            <p className="mt-2 text-sm font-semibold text-slate-900">{product.pricing}</p>
+          </div>
+          <div className="rounded-[1.25rem] border border-slate-100 bg-slate-50 px-4 py-3">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-sky-700">
+              Weight
+            </p>
+            <p className="mt-2 text-sm text-slate-700">{product.weight}</p>
+          </div>
+          <div className="rounded-[1.25rem] border border-slate-100 bg-slate-50 px-4 py-3">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-sky-700">
+              Material
+            </p>
+            <p className="mt-2 text-sm text-slate-700">{product.material}</p>
+          </div>
+        </div>
+
+        <Link
+          href={`/products/${product.slug}`}
+          className="mt-6 inline-flex rounded-full bg-gradient-to-r from-sky-600 via-cyan-500 to-teal-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-200"
+        >
+          Open Product Page
+        </Link>
+      </div>
+    </motion.article>
+  );
+}
+
 export function BusinessHomepage() {
+  const [products, setProducts] = useState<Product[]>(websiteProducts);
+  const [works, setWorks] = useState<WebWork[]>(websiteWorks);
+
+  useEffect(() => {
+    setProducts(getStoredProducts());
+    setWorks(getStoredWorks());
+  }, []);
+
+  const featuredProduct = products[0];
+
+  const homepageStats = useMemo(
+    () => [
+      ...stats.slice(0, 3),
+      { value: `${products.length}`, label: "Product categories currently shown on website" },
+    ],
+    [products],
+  );
+
   return (
     <main className="relative overflow-hidden bg-white text-slate-900">
       <FloatingBackground />
@@ -187,7 +213,7 @@ export function BusinessHomepage() {
               SP
             </div>
             <div>
-              <p className="text-sm font-semibold tracking-[0.18em] text-sky-700 uppercase">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-700">
                 {company.name}
               </p>
               <p className="text-xs text-slate-500">{company.tagline}</p>
@@ -195,17 +221,17 @@ export function BusinessHomepage() {
           </a>
 
           <nav className="hidden items-center gap-8 text-sm font-medium text-slate-600 lg:flex">
+            <a href="#products" className="transition hover:text-sky-700">
+              Products
+            </a>
+            <a href="#works" className="transition hover:text-sky-700">
+              Real Projects
+            </a>
             <a href="#services" className="transition hover:text-sky-700">
               Services
             </a>
-            <a href="#industries" className="transition hover:text-sky-700">
-              Industries
-            </a>
-            <a href="#projects" className="transition hover:text-sky-700">
-              Projects
-            </a>
             <a href="/admin/login" className="transition hover:text-sky-700">
-              Admin Login
+              Dashboard
             </a>
             <a href="#contact" className="transition hover:text-sky-700">
               Contact
@@ -230,7 +256,7 @@ export function BusinessHomepage() {
       </header>
 
       <section id="top" className="relative pt-12 sm:pt-16 lg:pt-20">
-        <Container className="grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
+        <Container className="grid items-center gap-14 lg:grid-cols-[1.02fr_0.98fr]">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
@@ -238,36 +264,41 @@ export function BusinessHomepage() {
           >
             <div className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-white/90 px-4 py-2 text-sm font-semibold text-sky-700 shadow-sm">
               <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
-              Road Safety, Industrial Signage, and Work-Zone Solutions
+              Product-first catalogue for safety boards and sign systems
             </div>
 
             <h1 className="mt-6 max-w-4xl text-5xl font-semibold tracking-tight text-slate-950 sm:text-6xl lg:text-7xl">
-              Reliable signboards for highways, factories, warehouses, and construction sites.
+              Explore the different safety boards your client can order, not just the company profile.
             </h1>
 
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600 sm:text-xl">
-              {company.name} designs, fabricates, and installs safety and
-              directional signage that helps people move clearly and safely in
-              high-traffic and high-risk environments.
+              Browse different types of road, factory, warning, diversion, and
+              navigation boards. Every product opens its own page with product
+              images, size, weight, material, pricing, and other useful details.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
               <a
-                href="#services"
+                href="#products"
                 className="rounded-full bg-gradient-to-r from-sky-600 via-cyan-500 to-teal-500 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-sky-200 transition hover:translate-y-[-1px]"
               >
-                Explore Services
+                Browse Products
               </a>
               <a
-                href={`tel:${company.phone.replace(/\s+/g, "")}`}
+                href="#works"
                 className="rounded-full border border-sky-200 bg-sky-50 px-6 py-3.5 text-sm font-semibold text-sky-700 transition hover:bg-sky-100"
               >
-                Call for Enquiry
+                See Real Projects
               </a>
             </div>
 
             <div className="mt-10 grid gap-4 sm:grid-cols-2">
-              {highlights.map((item) => (
+              {[
+                "Each product opens a separate detail page",
+                "Cards show size, weight, and starting price quickly",
+                "Dashboard can add or remove products and web works",
+                "UI stays clean and simple for business visitors",
+              ].map((item) => (
                 <div
                   key={item}
                   className="rounded-2xl border border-white bg-white/85 px-4 py-4 text-sm font-medium text-slate-700 shadow-[0_12px_40px_rgba(15,23,42,0.06)]"
@@ -279,14 +310,14 @@ export function BusinessHomepage() {
             </div>
           </motion.div>
 
-          <HeroIllustration />
+          <ProductSpotlight featured={featuredProduct} />
         </Container>
       </section>
 
       <section className="relative mt-14 sm:mt-20">
         <Container>
           <div className="grid gap-5 rounded-[2rem] border border-sky-100 bg-white/90 p-6 shadow-[0_30px_100px_rgba(15,23,42,0.06)] sm:grid-cols-2 xl:grid-cols-4">
-            {stats.map((item, index) => (
+            {homepageStats.map((item, index) => (
               <motion.div
                 key={item.label}
                 initial={{ opacity: 0, y: 20 }}
@@ -295,9 +326,7 @@ export function BusinessHomepage() {
                 transition={{ delay: index * 0.08, duration: 0.45 }}
                 className="rounded-[1.5rem] border border-slate-100 bg-slate-50 px-5 py-6"
               >
-                <p className="text-4xl font-semibold tracking-tight text-slate-950">
-                  {item.value}
-                </p>
+                <p className="text-4xl font-semibold tracking-tight text-slate-950">{item.value}</p>
                 <p className="mt-2 text-sm leading-6 text-slate-600">{item.label}</p>
               </motion.div>
             ))}
@@ -305,69 +334,77 @@ export function BusinessHomepage() {
         </Container>
       </section>
 
-      <section className="py-20 sm:py-24">
-        <Container className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-          <SectionTitle
-            eyebrow="About the Company"
-            title="A signage execution partner focused on safety, clarity, and long-term outdoor performance"
-            text="The website copy now speaks more directly about the actual business: sign design, reflective fabrication, structure work, and site installation for roads and industrial environments."
-          />
-
-          <div className="grid gap-4">
-            {companyOverview.map((item) => (
-              <div
-                key={item}
-                className="rounded-[1.75rem] border border-sky-100 bg-white px-6 py-5 text-base leading-8 text-slate-600 shadow-[0_18px_60px_rgba(15,23,42,0.05)]"
-              >
-                {item}
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      <section id="industries" className="pb-20 sm:pb-24">
+      <section id="products" className="py-20 sm:py-24">
         <Container>
           <SectionTitle
-            eyebrow="Industries We Serve"
-            title="Solutions prepared for public roads, industrial spaces, and active project sites"
-            text="Each category is built around how people actually move through the site, what warnings they need to see, and how long the signage must perform outdoors."
+            eyebrow="Product Catalogue"
+            title="Different safety boards and sign systems shown clearly on the website"
+            text="Instead of staying general, the homepage now introduces the actual products clients care about. Visitors can open each product and view matching project examples."
           />
 
           <div className="mt-10 grid gap-6 lg:grid-cols-3">
-            {sectors.map((sector, index) => (
-              <motion.article
-                key={sector.title}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ delay: index * 0.08, duration: 0.5 }}
-                className="group rounded-[2rem] border border-sky-100 bg-white p-7 shadow-[0_20px_70px_rgba(15,23,42,0.06)] transition hover:-translate-y-1 hover:shadow-[0_25px_80px_rgba(14,165,233,0.12)]"
-              >
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-100 to-cyan-50 text-lg font-semibold text-sky-700">
-                  {index + 1}
-                </div>
-                <h3 className="mt-6 text-2xl font-semibold text-slate-900">
-                  {sector.title}
-                </h3>
-                <p className="mt-4 text-base leading-8 text-slate-600">
-                  {sector.description}
-                </p>
-              </motion.article>
+            {products.map((product, index) => (
+              <ProductCard key={product.slug} product={product} index={index} />
             ))}
           </div>
         </Container>
       </section>
 
-      <section
-        id="services"
-        className="border-y border-sky-100 bg-gradient-to-b from-sky-50/80 to-white py-20 sm:py-24"
-      >
+      <section id="works" className="border-y border-sky-100 bg-gradient-to-b from-sky-50/80 to-white py-20 sm:py-24">
+        <Container>
+          <SectionTitle
+            eyebrow="Real Projects"
+            title="Current and recent works that support the products on the website"
+            text="This section gives buyers a quick look at the type of jobs being executed, while every product detail page shows the projects related to that category."
+          />
+
+          <div className="mt-10 grid gap-6 lg:grid-cols-3">
+            {works.map((work, index) => {
+              const linkedProduct = products.find((item) => item.slug === work.productSlug);
+
+              return (
+                <motion.article
+                  key={work.id}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.25 }}
+                  transition={{ delay: index * 0.06, duration: 0.45 }}
+                  className="rounded-[2rem] border border-white bg-white p-7 shadow-[0_18px_60px_rgba(15,23,42,0.06)]"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <span className="rounded-full bg-sky-100 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-sky-700">
+                      {linkedProduct?.category ?? "Website Work"}
+                    </span>
+                    <span className="rounded-full bg-emerald-100 px-3 py-1.5 text-xs font-semibold text-emerald-700">
+                      {work.status}
+                    </span>
+                  </div>
+                  <h3 className="mt-5 text-2xl font-semibold text-slate-900">{work.title}</h3>
+                  <p className="mt-2 text-sm font-medium text-slate-600">
+                    {work.client} - {work.location}
+                  </p>
+                  <p className="mt-4 text-base leading-8 text-slate-600">{work.summary}</p>
+                  {linkedProduct ? (
+                    <Link
+                      href={`/products/${linkedProduct.slug}`}
+                      className="mt-6 inline-flex text-sm font-semibold text-sky-700"
+                    >
+                      View {linkedProduct.name}
+                    </Link>
+                  ) : null}
+                </motion.article>
+              );
+            })}
+          </div>
+        </Container>
+      </section>
+
+      <section id="services" className="py-20 sm:py-24">
         <Container className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
           <SectionTitle
-            eyebrow="Core Services"
-            title="From planning and production to installation at site"
-            text="These service blocks describe the actual work handled by the company instead of generic presentation statements."
+            eyebrow="Execution Support"
+            title="Design, fabrication, installation, and rollout support around the products"
+            text="The product catalogue leads the site now, while these service blocks explain how the team helps from planning to installation."
           />
 
           <div className="grid gap-5 sm:grid-cols-2">
@@ -382,115 +419,21 @@ export function BusinessHomepage() {
               >
                 <div className="flex items-center gap-3">
                   <div className="h-3 w-3 rounded-full bg-amber-400" />
-                  <h3 className="text-xl font-semibold text-slate-900">
-                    {service.title}
-                  </h3>
+                  <h3 className="text-xl font-semibold text-slate-900">{service.title}</h3>
                 </div>
-                <p className="mt-4 text-base leading-8 text-slate-600">
-                  {service.description}
-                </p>
+                <p className="mt-4 text-base leading-8 text-slate-600">{service.description}</p>
               </motion.div>
             ))}
           </div>
         </Container>
       </section>
 
-      <section className="py-20 sm:py-24">
-        <Container className="grid gap-10 lg:grid-cols-[1fr_0.95fr]">
-          <div className="rounded-[2rem] border border-sky-100 bg-white p-8 shadow-[0_20px_70px_rgba(15,23,42,0.06)]">
-            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-sky-700">
-              Why Clients Choose Us
-            </p>
-            <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-              A business website that now reflects the company more clearly
-            </h2>
-            <div className="mt-8 space-y-4">
-              {reasons.map((reason) => (
-                <div
-                  key={reason}
-                  className="rounded-2xl border border-slate-100 bg-slate-50 px-5 py-4 text-base leading-7 text-slate-700"
-                >
-                  {reason}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="rounded-[2rem] border border-sky-100 bg-gradient-to-br from-sky-700 to-cyan-600 p-8 text-white shadow-[0_24px_80px_rgba(15,23,42,0.12)]">
-            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-sky-100">
-              Quality Promise
-            </p>
-            <h3 className="mt-4 text-3xl font-semibold tracking-tight">
-              Durable signage for high-attention environments
-            </h3>
-            <div className="mt-8 grid gap-4">
-              {[
-                "Reflective surfaces designed for visibility in low-light and night conditions",
-                "Boards and structures produced for long outdoor use and clean installation",
-                "Clear warning, regulatory, and directional communication for practical site use",
-                "Presentation-ready execution for infrastructure, industry, and project clients",
-              ].map((item) => (
-                <div
-                  key={item}
-                  className="rounded-2xl border border-white/15 bg-white/10 px-5 py-4 text-sm leading-7 text-sky-50"
-                >
-                  {item}
-                </div>
-              ))}
-            </div>
-          </div>
-        </Container>
-      </section>
-
-      <section id="projects" className="bg-slate-50 py-20 sm:py-24">
-        <Container>
-          <SectionTitle
-            eyebrow="Project Highlights"
-            title="Representative work across roads, plants, and construction zones"
-            text="These sample project blocks now read like actual business capability statements that help a buyer or operations team understand the company’s scope."
-          />
-
-          <div className="mt-10 grid gap-6 lg:grid-cols-3">
-            {projects.map((project, index) => (
-              <motion.article
-                key={project.title}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ delay: index * 0.08, duration: 0.5 }}
-                className="overflow-hidden rounded-[2rem] border border-white bg-white shadow-[0_20px_70px_rgba(15,23,42,0.05)]"
-              >
-                <div className="relative h-60 overflow-hidden bg-slate-100">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="h-full w-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/20 via-transparent to-transparent" />
-                </div>
-                <div className="p-7">
-                  <p className="text-sm font-semibold uppercase tracking-[0.22em] text-sky-700">
-                    {project.category}
-                  </p>
-                  <h3 className="mt-3 text-2xl font-semibold text-slate-900">
-                    {project.title}
-                  </h3>
-                  <p className="mt-4 text-base leading-8 text-slate-600">
-                    {project.description}
-                  </p>
-                </div>
-              </motion.article>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      <section className="py-20 sm:py-24">
+      <section className="bg-slate-50 py-20 sm:py-24">
         <Container className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr]">
           <SectionTitle
             eyebrow="Execution Process"
-            title="A clear workflow from requirement to installation"
-            text="This process section explains how work is typically planned and executed for road projects, industrial campuses, and construction zones."
+            title="A simple workflow from requirement to installed board"
+            text="The UI stays straightforward and business-friendly, while the site still explains how enquiries move into fabrication and installation."
           />
 
           <div className="grid gap-5">
@@ -507,12 +450,8 @@ export function BusinessHomepage() {
                   {item.step}
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-slate-900">
-                    {item.title}
-                  </h3>
-                  <p className="mt-3 text-base leading-8 text-slate-600">
-                    {item.description}
-                  </p>
+                  <h3 className="text-xl font-semibold text-slate-900">{item.title}</h3>
+                  <p className="mt-3 text-base leading-8 text-slate-600">{item.description}</p>
                 </div>
               </motion.div>
             ))}
@@ -526,15 +465,15 @@ export function BusinessHomepage() {
             <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.28em] text-sky-100">
-                  Contact and Business Enquiry
+                  Contact and Product Enquiry
                 </p>
                 <h2 className="mt-4 max-w-3xl text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-5xl">
-                  Contact the team for road safety signs, industrial boards, and project requirements
+                  Ask about any product category, board requirement, or project execution need
                 </h2>
                 <p className="mt-5 max-w-2xl text-base leading-8 text-sky-50 sm:text-lg">
-                  Reach out for quotations, project discussions, material
-                  requirements, or site-specific signage planning. The admin
-                  login is also available for the internal dashboard view.
+                  Use the website to browse products, open product pages, and
+                  review real projects. The dashboard is available for the team
+                  to add or remove products and works shown online.
                 </p>
               </div>
 
