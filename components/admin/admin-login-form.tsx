@@ -14,6 +14,7 @@ export function AdminLoginForm() {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setError("");
 
     if (
       email.trim().toLowerCase() === adminCredentials.email &&
@@ -28,17 +29,20 @@ export function AdminLoginForm() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-md rounded-[2rem] border border-sky-100 bg-white p-8 shadow-[0_25px_80px_rgba(15,23,42,0.08)]">
+    <div className="mx-auto w-full max-w-md rounded-[2rem] border border-orange-100 bg-white p-8 shadow-[0_25px_80px_rgba(15,23,42,0.08)]">
       <div className="mb-6">
-        <p className="text-sm font-semibold uppercase tracking-[0.28em] text-sky-700">
-          Admin Access
-        </p>
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900">
-          Login to the business dashboard
+        <div className="mb-4 flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-red-600 text-xs font-black text-white">
+            AKB
+          </div>
+          <p className="text-lg font-black uppercase tracking-tight text-slate-900">AKB Admin</p>
+        </div>
+        <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
+          Login to the admin dashboard
         </h1>
         <p className="mt-3 text-sm leading-7 text-slate-600">
-          This is a frontend demo login. It opens the admin dashboard view for
-          works, finances, stock, orders, and payment tracking.
+          Use the normal admin email and password to open the dashboard for products,
+          works, stock, orders, and payments.
         </p>
       </div>
 
@@ -50,8 +54,10 @@ export function AdminLoginForm() {
           <input
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 outline-none transition focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
+            className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 outline-none transition focus:border-orange-400 focus:ring-4 focus:ring-orange-100"
             type="email"
+            placeholder="admin@example.com"
+            autoComplete="email"
           />
         </label>
 
@@ -62,8 +68,10 @@ export function AdminLoginForm() {
           <input
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 outline-none transition focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
+            className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-slate-900 outline-none transition focus:border-orange-400 focus:ring-4 focus:ring-orange-100"
             type="password"
+            placeholder="Enter admin password"
+            autoComplete="current-password"
           />
         </label>
 
@@ -75,17 +83,13 @@ export function AdminLoginForm() {
 
         <button
           type="submit"
-          className="w-full rounded-2xl bg-gradient-to-r from-sky-600 via-cyan-500 to-teal-500 px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-sky-200 transition hover:translate-y-[-1px]"
+          className="w-full rounded-2xl bg-gradient-to-r from-orange-600 to-red-600 px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-orange-200 transition hover:translate-y-[-1px] hover:from-orange-700 hover:to-red-700"
         >
           Open Dashboard
         </button>
       </form>
 
-      <div className="mt-6 rounded-2xl border border-amber-100 bg-amber-50 px-4 py-4 text-sm text-amber-900">
-        <p className="font-semibold">Demo credentials</p>
-        <p className="mt-1">Email: {adminCredentials.email}</p>
-        <p>Password: {adminCredentials.password}</p>
-      </div>
+     
     </div>
   );
 }

@@ -1,118 +1,120 @@
 export const company = {
-  name: "SafePath Sign Systems",
-  tagline: "Road safety, industrial signage, and navigation systems",
-  phone: "+91 98765 43210",
-  email: "hello@safepathsigns.com",
-  address: "Pune, Maharashtra",
-  whatsapp: "+919876543210",
-  since: "2012",
+  name: "AKB",
+  tagline: "Premium Safety Signboards for Roads, Industries & Construction",
+  phone: "+91 9146531857",
+  email: "info@akbroadboards.com",
+  address: "Pune, Maharashtra, India",
+  whatsapp: "+91 9146531857",
+  since: "2011",
 };
 
 export const stats = [
-  { value: "450+", label: "Signboards supplied and installed" },
-  { value: "120+", label: "Highway, plant, and site clients served" },
-  { value: "98%", label: "Projects completed on committed timelines" },
-  { value: "14+", label: "Years in signage execution and support" },
+  { value: "5000+", label: "Signboards manufactured and installed" },
+  { value: "250+", label: "Satisfied clients across India" },
+  { value: "99%", label: "On-time project completion rate" },
+  { value: "13+", label: "Years of excellence in signage" },
 ];
 
 export const sectors = [
   {
-    title: "Highways and Expressways",
+    title: "National Highways & Expressways",
     description:
-      "Directional boards, lane guidance signs, chevron systems, speed warnings, kilometer markers, and reflective roadside safety signs.",
+      "Traffic control signs, lane guidance boards, chevron warning systems, speed limit signs, kilometer markers, and reflective directional signs for seamless highway navigation.",
   },
   {
-    title: "Factories and Warehouses",
+    title: "Industrial Plants & Warehouses",
     description:
-      "Hazard identification boards, PPE instructions, emergency assembly signs, machine warnings, internal route signs, and loading zone markings.",
+      "Hazard warning boards, PPE requirement signs, emergency assembly points, machinery warnings, loading zone markings, and internal safety communication systems.",
   },
   {
-    title: "Construction and Infrastructure",
+    title: "Construction & Infrastructure Sites",
     description:
-      "Diversion boards, barricade signage, excavation warnings, contractor boards, detour systems, and temporary work-zone guidance.",
+      "Traffic diversion boards, safety warnings, barricade signs, worker protection notices, site boundary markers, and temporary traffic management signage systems.",
   },
 ];
 
 export const services = [
   {
-    title: "Traffic and Safety Sign Design",
+    title: "Safety Sign Design & Planning",
     description:
-      "Sign layouts prepared for fast readability, site conditions, safety requirements, and practical installation needs.",
+      "Custom-designed signboards optimized for visibility, compliance with traffic regulations, and installation on highways, industrial sites, and construction zones.",
   },
   {
-    title: "Reflective Sign Fabrication",
+    title: "Expert Fabrication",
     description:
-      "Production using reflective sheeting, ACP, MS structures, GI poles, and durable outdoor finishing suited to long-term use.",
+      "High-quality manufacturing using reflective sheeting, ACP panels, MS structures, GI poles, and durable finishes built to withstand harsh outdoor conditions.",
   },
   {
-    title: "Site Survey and Position Planning",
+    title: "Site Survey & Positioning",
     description:
-      "Placement planning based on viewing angle, traffic movement, plant circulation, obstruction points, and route flow.",
+      "Professional on-site assessment to determine optimal placement, visibility angles, and installation requirements for maximum impact and safety.",
   },
   {
-    title: "Installation and Maintenance Support",
+    title: "Professional Installation & Maintenance",
     description:
-      "On-site fixing, structure installation, alignment checks, replacement support, and scaling for new project phases.",
+      "Complete installation service, structural alignment, periodic maintenance support, and immediate replacement service for damaged or worn signboards.",
   },
 ];
 
 export const highlights = [
-  "Regulatory, caution, and directional road signs",
-  "Industrial safety and hazard communication boards",
-  "Factory route maps and internal navigation signage",
-  "Construction diversion and temporary traffic systems",
-  "Retro-reflective materials for day and night visibility",
-  "Custom structures, poles, frames, and mounting solutions",
+  "Mandatory traffic & warning road signs",
+  "Industrial safety and hazard boards",
+  "Reflective and high-visibility signage",
+  "Factory route maps & navigation signs",
+  "Construction site safety signboards",
+  "Durable structures with long-term guarantee",
+  "ISO and safety standard compliant",
+  "Custom design & installation support",
 ];
 
 export const process = [
   {
     step: "01",
-    title: "Requirement Discussion",
+    title: "Project Consultation",
     description:
-      "We collect site details, safety objectives, required sign types, and location priorities from the client team.",
+      "We understand your signage requirements, site conditions, safety objectives, and specific board types needed for your location.",
   },
   {
     step: "02",
-    title: "Survey and Layout Planning",
+    title: "Site Analysis & Design",
     description:
-      "Our team studies the site and prepares sign positions, board sizes, messages, material requirements, and mounting plans.",
+      "Our team conducts a site visit, plans optimal board positions, determines sizing, and designs signboards that comply with safety standards.",
   },
   {
     step: "03",
-    title: "Fabrication and Finishing",
+    title: "Manufacturing & Quality Check",
     description:
-      "Boards and supporting structures are produced with reflective films, weather-ready surfaces, and durable fabrication standards.",
+      "Signboards are fabricated with precision using premium reflective materials, tested for durability, and finished to perfection.",
   },
   {
     step: "04",
-    title: "Installation and Handover",
+    title: "Expert Installation & Support",
     description:
-      "The final system is installed, checked for readability and placement, and handed over with support for future requirements.",
+      "Professional installation by trained technicians, structural alignment verification, and ongoing maintenance support for your investment.",
   },
 ];
 
 export const projects = [
   {
-    title: "State Highway Guidance Package",
-    category: "Road Safety Execution",
-    image: "/images/highway-guidance.svg",
+    title: "NH-48 Highway Safety Signage",
+    category: "National Highway Safety",
+    image: "/images/hero-bg.png",
     description:
-      "Design, fabrication, and installation of lane guidance boards, caution signs, kilometer markers, and reflective warning systems.",
+      "Complete signage installation on 50km stretch including lane guidance, warning signs, kilometer markers, and emergency route markers.",
   },
   {
-    title: "Factory Safety Signage Rollout",
-    category: "Industrial Signage System",
-    image: "/images/factory-safety.svg",
+    title: "Industrial Complex Safety Board Package",
+    category: "Industrial Safety System",
+    image: "/images/hero-bg.png",
     description:
-      "Complete internal signage system covering PPE areas, restricted zones, hazard warnings, route maps, and emergency directions.",
+      "Comprehensive safety signage for 200-acre industrial zone covering hazard warnings, PPE zones, emergency assembly points, and machinery caution boards.",
   },
   {
-    title: "Metro Construction Diversion Setup",
-    category: "Construction Zone Signage",
-    image: "/images/construction-diversion.svg",
+    title: "Metro Construction Diversion Signage",
+    category: "Construction Zone Management",
+    image: "/images/hero-bg.png",
     description:
-      "Temporary traffic diversion boards, barricade graphics, pedestrian rerouting signs, and worker safety communication during execution.",
+      "Temporary traffic diversion system with 150+ specialized boards for worker safety, traffic flow, and pedestrian guidance during active construction.",
   },
 ];
 
@@ -124,9 +126,9 @@ export const reasons = [
 ];
 
 export const companyOverview = [
-  "SafePath Sign Systems supplies and installs safety signboards for highways, industrial plants, warehouses, and active construction zones.",
-  "The company focuses on visibility, durability, and correct message placement so that signboards support movement, reduce confusion, and improve site safety.",
-  "From small internal factory boards to large road-facing directional structures, the team handles design, fabrication, and installation in one workflow.",
+  "AKB is a leading manufacturer and installer of safety signboards serving highways, industrial plants, warehouses, and active construction zones across India.",
+  "We specialize in designing, fabricating, and installing high-visibility signboards that enhance safety, reduce accidents, and ensure regulatory compliance.",
+  "From small facility boards to large-scale highway signage, AKB delivers end-to-end solutions with expert planning, quality manufacturing, and professional installation.",
 ];
 
 export const contactOptions = [
@@ -142,7 +144,7 @@ export const contactOptions = [
   },
   {
     label: "WhatsApp",
-    value: "+91 98765 43210",
+    value: company.whatsapp,
     href: `https://wa.me/${company.whatsapp.replace(/\D/g, "")}`,
   },
 ];

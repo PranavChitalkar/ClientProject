@@ -40,12 +40,8 @@ export const websiteProducts: Product[] = [
     slug: "retro-reflective-road-signs",
     name: "Retro Reflective Road Signs",
     category: "Highway Safety Boards",
-    image: "/images/highway-guidance.svg",
-    gallery: [
-      "/images/highway-guidance.svg",
-      "/images/construction-diversion.svg",
-      "/images/factory-safety.svg",
-    ],
+    image: "", // Placeholder space as requested
+    gallery: [],
     shortDescription:
       "Mandatory, caution, and directional boards for highways, city roads, and plant approaches.",
     description:
@@ -172,12 +168,8 @@ export const websiteProducts: Product[] = [
     slug: "wayfinding-navigation-signs",
     name: "Wayfinding and Navigation Signs",
     category: "Directional Boards",
-    image: "/images/highway-guidance.svg",
-    gallery: [
-      "/images/highway-guidance.svg",
-      "/images/factory-safety.svg",
-      "/images/construction-diversion.svg",
-    ],
+    image: "",
+    gallery: [],
     shortDescription:
       "Internal route signs, building identifiers, and navigation boards for campuses and commercial sites.",
     description:

@@ -3,19 +3,45 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { company, contactOptions } from "@/data/site-content";
-import { websiteProducts, websiteWorks, type Product } from "@/data/web-catalog";
-import { getStoredProducts, getStoredWorks } from "@/data/web-storage";
+import { websiteProducts, websiteWorks, type Product, type WebWork } from "@/data/web-catalog";
 
 export function ProductDetailPage({ slug }: { slug: string }) {
-  const [products, setProducts] = useState(websiteProducts);
-  const [works, setWorks] = useState(websiteWorks);
+  const [products, setProducts] = useState<Product[]>(websiteProducts);
+  const [works, setWorks] = useState<WebWork[]>(websiteWorks);
   const [selectedImage, setSelectedImage] = useState("");
 
   useEffect(() => {
-    const storedProducts = getStoredProducts();
-    const storedWorks = getStoredWorks();
-    setProducts(storedProducts);
-    setWorks(storedWorks);
+    let isActive = true;
+
+    async function loadProductData() {
+      try {
+        const response = await fetch("/api/dashboard", { cache: "no-store" });
+        const data = (await response.json()) as {
+          products?: Product[];
+          websiteWorks?: WebWork[];
+        };
+
+        if (!isActive) {
+          return;
+        }
+
+        if (Array.isArray(data.products)) {
+          setProducts(data.products);
+        }
+
+        if (Array.isArray(data.websiteWorks)) {
+          setWorks(data.websiteWorks);
+        }
+      } catch {
+        // Keep the demo content if the API is not available yet.
+      }
+    }
+
+    void loadProductData();
+
+    return () => {
+      isActive = false;
+    };
   }, []);
 
   const product = useMemo(() => products.find((item) => item.slug === slug), [products, slug]);
@@ -42,34 +68,34 @@ export function ProductDetailPage({ slug }: { slug: string }) {
   ];
 
   return (
-    <main className="min-h-screen bg-[linear-gradient(180deg,#f7fbff_0%,#ffffff_100%)] text-slate-900">
-      <section className="border-b border-sky-100 bg-white/80 backdrop-blur">
+    <main className="min-h-screen bg-white text-slate-900">
+      <section className="border-b border-slate-100 bg-white/80 backdrop-blur sticky top-0 z-30">
         <div className="mx-auto w-full max-w-7xl px-5 py-5 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.26em] text-sky-700">
-                Product Detail
+              <p className="text-xs font-bold uppercase tracking-[0.26em] text-orange-600">
+                Product Specifications
               </p>
-              <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
+              <h1 className="mt-2 text-4xl font-black tracking-tight text-slate-950 sm:text-5xl uppercase">
                 {product.name}
               </h1>
-              <p className="mt-3 max-w-3xl text-base leading-8 text-slate-600">
+              <p className="mt-4 max-w-3xl text-lg font-medium leading-relaxed text-slate-500">
                 {product.description}
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-4">
               <Link
                 href="/"
-                className="rounded-full border border-sky-200 bg-sky-50 px-5 py-3 text-sm font-semibold text-sky-700 transition hover:bg-sky-100"
+                className="rounded-full border border-slate-200 bg-white px-6 py-3 text-[12px] font-bold uppercase tracking-widest text-slate-900 transition hover:bg-slate-50"
               >
-                Back to Website
+                Back to Home
               </Link>
               <a
                 href={`https://wa.me/${company.whatsapp.replace(/\D/g, "")}`}
-                className="rounded-full bg-gradient-to-r from-sky-600 via-cyan-500 to-teal-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-200"
+                className="rounded-full bg-orange-600 px-6 py-3 text-[12px] font-bold uppercase tracking-widest text-white shadow-xl shadow-orange-200 transition hover:bg-orange-700"
               >
-                Ask for Quote
+                Inquiry for Order
               </a>
             </div>
           </div>
@@ -77,38 +103,52 @@ export function ProductDetailPage({ slug }: { slug: string }) {
       </section>
 
       <section className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-10 sm:px-6 lg:grid-cols-[1.08fr_0.92fr] lg:px-8 lg:py-14">
-        <div className="space-y-5">
-          <div className="overflow-hidden rounded-[2rem] border border-sky-100 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
-            <div className="relative h-[26rem] bg-slate-100">
-              <img
-                src={selectedImage || product.image}
-                alt={product.name}
-                className="h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/10 to-transparent" />
-              <div className="absolute left-5 top-5 rounded-full bg-white/90 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-sky-700">
+        <div className="space-y-6">
+          <div className="overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white shadow-2xl shadow-slate-200/50">
+            <div className="relative h-[30rem] bg-slate-50 flex items-center justify-center p-12">
+              {selectedImage || product.image ? (
+                <img
+                  src={selectedImage || product.image}
+                  alt={product.name}
+                  className="h-full w-full object-contain"
+                />
+              ) : (
+                <div className="w-full h-full rounded-[2rem] border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-4 text-slate-400">
+                  <svg className="w-12 h-12 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <span className="text-sm font-bold uppercase tracking-widest">Image to be added by user</span>
+                </div>
+              )}
+              <div className="absolute left-6 top-6 rounded-full bg-orange-600 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-white">
                 {product.category}
               </div>
             </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-3">
-            {product.gallery.map((image, index) => (
+            {product.gallery.length > 0 ? product.gallery.map((image, index) => (
               <button
                 key={`${image}-${index}`}
                 type="button"
                 onClick={() => setSelectedImage(image)}
-                className={`overflow-hidden rounded-[1.5rem] border bg-white p-2 shadow-sm transition ${
-                  selectedImage === image ? "border-sky-300" : "border-slate-100"
+                className={`overflow-hidden rounded-2xl border bg-white p-2 shadow-sm transition ${
+                  selectedImage === image ? "border-orange-600 scale-105" : "border-slate-100 opacity-60 hover:opacity-100"
                 }`}
               >
                 <img
                   src={image}
                   alt={`${product.name} view ${index + 1}`}
-                  className="h-28 w-full rounded-[1rem] object-cover"
+                  className="h-28 w-full rounded-xl object-cover"
                 />
               </button>
-            ))}
+            )) : (
+              [1, 2, 3].map((i) => (
+                <div key={i} className="h-28 rounded-2xl border-2 border-dashed border-slate-100 bg-slate-50/30 flex items-center justify-center">
+                  <span className="text-[10px] font-bold text-slate-300 uppercase">View {i}</span>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
@@ -202,23 +242,30 @@ export function ProductDetailPage({ slug }: { slug: string }) {
           </div>
 
           <div className="space-y-8">
-            <div className="rounded-[2rem] border border-sky-100 bg-gradient-to-br from-sky-700 to-cyan-600 p-7 text-white shadow-[0_20px_80px_rgba(14,165,233,0.18)]">
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-100">
-                Contact Team
-              </p>
-              <h2 className="mt-3 text-2xl font-semibold">Get quote, quantity, and size details</h2>
-              <div className="mt-6 grid gap-3">
-                {contactOptions.map((option) => (
-                  <a
-                    key={option.label}
-                    href={option.href}
-                    className="rounded-2xl bg-white px-5 py-4 text-sm font-semibold text-slate-900"
-                  >
-                    {option.label}: {option.value}
-                  </a>
-                ))}
-              </div>
+          <div className="rounded-[2.5rem] border border-slate-100 bg-slate-900 p-8 shadow-2xl relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-24 h-24 orange-gradient opacity-10 rounded-bl-[100px] transition group-hover:scale-150" />
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-orange-500 relative z-10">
+              Direct Order
+            </p>
+            <h2 className="mt-4 text-3xl font-black text-white italic uppercase leading-none relative z-10">Get quote & size details</h2>
+            <div className="mt-8 grid gap-4 relative z-10">
+              {contactOptions.map((option) => (
+                <a
+                  key={option.label}
+                  href={option.href}
+                  className="flex items-center justify-between rounded-2xl bg-white/5 border border-white/10 p-5 transition hover:bg-orange-600"
+                >
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 group-hover:text-white">{option.label}</span>
+                    <span className="text-white font-bold tracking-tight">{option.value}</span>
+                  </div>
+                  <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7-7 7" />
+                  </svg>
+                </a>
+              ))}
             </div>
+          </div>
 
             <div className="rounded-[2rem] border border-sky-100 bg-white p-7 shadow-[0_20px_70px_rgba(15,23,42,0.06)]">
               <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-700">

@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SafePath Sign Systems",
+  title: "AKB - Premium Safety Signboards | Road, Industrial & Construction Boards",
   description:
-    "Bright professional business website for a road safety and industrial signage company serving highways, factories, and construction zones.",
+    "AKB manufactures and installs high-quality safety signboards for highways, industrial plants, warehouses, and construction zones. Expert road safety solutions since 2011.",
 };
 
 export default function RootLayout({
