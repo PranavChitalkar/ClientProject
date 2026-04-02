@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "motion/react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
   company,
   contactOptions,
@@ -10,12 +10,8 @@ import {
   services,
   stats,
 } from "@/data/site-content";
-import {
-  websiteProducts,
-  websiteWorks,
-  type Product,
-  type WebWork,
-} from "@/data/web-catalog";
+import type { Product, WebWork } from "@/data/web-catalog";
+import type { WebsiteCatalogSnapshot } from "@/lib/dashboard-data";
 
 function Container({
   children,
@@ -64,65 +60,6 @@ function FloatingBackground() {
   );
 }
 
-function ProductSpotlight({ featured }: { featured?: Product }) {
-  if (!featured) {
-    return null;
-  }
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 28 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, delay: 0.2 }}
-      className="relative mx-auto w-full max-w-2xl"
-    >
-      <div className="overflow-hidden rounded-[2rem] border border-sky-100 bg-white/85 p-5 shadow-[0_30px_100px_rgba(15,23,42,0.10)] backdrop-blur">
-        <div className="rounded-[1.5rem] border border-slate-100 bg-slate-50 p-5">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-orange-600">
-                Featured Product
-              </p>
-              <h3 className="mt-2 text-2xl font-semibold text-slate-900">{featured.name}</h3>
-              <p className="mt-3 max-w-lg text-sm leading-7 text-slate-600">
-                {featured.shortDescription}
-              </p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                <span className="rounded-full bg-sky-50 px-3 py-1.5 text-xs font-semibold text-orange-600">
-                  {featured.size}
-                </span>
-                <span className="rounded-full bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-800">
-                  {featured.pricing}
-                </span>
-              </div>
-            </div>
-            <div className="rounded-2xl bg-gradient-to-br from-amber-400 to-yellow-300 px-4 py-3 text-sm font-semibold text-slate-900">
-              Since {company.since}
-            </div>
-          </div>
-
-          <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white">
-            <div className="relative h-72 bg-slate-100">
-              <img src={featured.image} alt={featured.name} className="h-full w-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/15 to-transparent" />
-            </div>
-            <div className="grid gap-4 p-5 sm:grid-cols-3">
-              {featured.features.map((item) => (
-                <div
-                  key={item}
-                  className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-4 text-sm font-medium text-slate-600"
-                >
-                  {item}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
 function ProductCard({ product, index }: { product: Product; index: number }) {
   return (
     <motion.article
@@ -130,29 +67,33 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.25 }}
       transition={{ delay: index * 0.06, duration: 0.45 }}
-      className="group overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm transition hover:shadow-xl hover:-translate-y-1"
+      className="group overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
     >
-      <div className="relative h-60 bg-slate-50 flex items-center justify-center p-8">
+      <div className="relative flex h-60 items-center justify-center bg-slate-50 p-8">
         {product.image ? (
           <img src={product.image} alt={product.name} className="h-full w-full object-contain" />
         ) : (
-          <div className="w-full h-full rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-3 text-slate-400">
-            <svg className="w-10 h-10 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="flex h-full w-full flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-slate-200 text-slate-400">
+            <svg className="h-10 w-10 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
             <span className="text-xs font-medium uppercase tracking-wider">Image to be added</span>
           </div>
         )}
-        <div className="absolute top-4 left-4">
-           <span className="rounded-full bg-orange-600 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white">
+        <div className="absolute left-4 top-4">
+          <span className="rounded-full bg-orange-600 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white">
             {product.category}
           </span>
         </div>
       </div>
 
       <div className="p-7">
-        <h3 className="text-xl font-bold text-slate-900 group-hover:text-orange-600 transition-colors uppercase tracking-tight">{product.name}</h3>
-        <p className="mt-3 text-sm leading-relaxed text-slate-500 line-clamp-2">{product.shortDescription}</p>
+        <h3 className="text-xl font-bold uppercase tracking-tight text-slate-900 transition-colors group-hover:text-orange-600">
+          {product.name}
+        </h3>
+        <p className="line-clamp-2 mt-3 text-sm leading-relaxed text-slate-500">
+          {product.shortDescription}
+        </p>
 
         <div className="mt-6 flex items-center justify-between border-t border-slate-50 pt-6">
           <div className="flex flex-col">
@@ -161,9 +102,9 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
           </div>
           <Link
             href={`/products/${product.slug}`}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white transition-all hover:bg-orange-600 group-hover:scale-110"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white transition-all group-hover:scale-110 hover:bg-orange-600"
           >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </Link>
@@ -173,45 +114,13 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
   );
 }
 
-export function BusinessHomepage() {
-  const [products, setProducts] = useState<Product[]>(websiteProducts);
-  const [works, setWorks] = useState<WebWork[]>(websiteWorks);
+type BusinessHomepageProps = {
+  initialCatalog?: WebsiteCatalogSnapshot;
+};
 
-  useEffect(() => {
-    let isActive = true;
-
-    async function loadCatalog() {
-      try {
-        const response = await fetch("/api/dashboard", { cache: "no-store" });
-        const data = (await response.json()) as {
-          products?: Product[];
-          websiteWorks?: WebWork[];
-        };
-
-        if (!isActive) {
-          return;
-        }
-
-        if (Array.isArray(data.products)) {
-          setProducts(data.products);
-        }
-
-        if (Array.isArray(data.websiteWorks)) {
-          setWorks(data.websiteWorks);
-        }
-      } catch {
-        // Keep the existing demo content when MongoDB is not reachable.
-      }
-    }
-
-    void loadCatalog();
-
-    return () => {
-      isActive = false;
-    };
-  }, []);
-
-  const featuredProduct = products[0];
+export function BusinessHomepage({ initialCatalog }: BusinessHomepageProps) {
+  const products: Product[] = initialCatalog?.products ?? [];
+  const works: WebWork[] = initialCatalog?.websiteWorks ?? [];
 
   const homepageStats = useMemo(
     () => [
@@ -232,7 +141,7 @@ export function BusinessHomepage() {
               AKB
             </div>
             <div>
-              <p className="text-lg font-black uppercase tracking-tight text-slate-900 leading-none">
+              <p className="text-lg leading-none font-black uppercase tracking-tight text-slate-900">
                 AKB
               </p>
               <p className="text-[10px] font-bold uppercase tracking-wider text-orange-600">Safety Signboards</p>
@@ -257,7 +166,7 @@ export function BusinessHomepage() {
           <div className="hidden items-center gap-4 lg:flex">
             <a
               href={`https://wa.me/${company.whatsapp.replace(/\D/g, "")}`}
-              className="rounded-full bg-orange-600 px-6 py-3 text-[13px] font-bold uppercase tracking-widest text-white transition hover:bg-orange-700 shadow-lg shadow-orange-200/50 hover:-translate-y-1"
+              className="rounded-full bg-orange-600 px-6 py-3 text-[13px] font-bold uppercase tracking-widest text-white shadow-lg shadow-orange-200/50 transition hover:-translate-y-1 hover:bg-orange-700"
             >
               Get a Quote
             </a>
@@ -265,36 +174,36 @@ export function BusinessHomepage() {
         </Container>
       </header>
 
-      <section id="top" className="relative pt-12 sm:pt-20 lg:pt-28 pb-20">
-        <Container className="grid items-center gap-8 lg:gap-12 lg:grid-cols-2">
+      <section id="top" className="relative pb-20 pt-12 sm:pt-20 lg:pt-28">
+        <Container className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
           >
             <div className="inline-flex items-center gap-3 rounded-full bg-red-50 px-5 py-2 text-[12px] font-bold uppercase tracking-widest text-red-600">
-              <span className="h-2 w-2 rounded-full bg-red-600 animate-pulse" />
+              <span className="h-2 w-2 animate-pulse rounded-full bg-red-600" />
               India's Safety Board Experts
             </div>
 
-            <h1 className="mt-8 text-5xl font-black tracking-tighter text-slate-950 sm:text-6xl lg:text-7xl leading-[0.9]">
+            <h1 className="mt-8 text-5xl font-black leading-[0.9] tracking-tighter text-slate-950 sm:text-6xl lg:text-7xl">
               PREMIUM SAFETY <span className="text-orange-600">SIGNBOARDS</span>
             </h1>
 
-            <p className="mt-8 max-w-lg text-lg leading-relaxed text-slate-700 font-medium">
+            <p className="mt-8 max-w-lg text-lg font-medium leading-relaxed text-slate-700">
               AKB manufactures and installs high-visibility safety signboards for national highways, industrial plants, warehouses, and construction zones across India.
             </p>
 
-            <ul className="mt-8 space-y-4 max-w-lg">
-              <li className="flex items-center gap-3 text-slate-700 font-medium">
+            <ul className="mt-8 max-w-lg space-y-4">
+              <li className="flex items-center gap-3 font-medium text-slate-700">
                 <span className="h-2 w-2 rounded-full bg-orange-600" />
                 Compliant with IRC & MORTH standards
               </li>
-              <li className="flex items-center gap-3 text-slate-700 font-medium">
+              <li className="flex items-center gap-3 font-medium text-slate-700">
                 <span className="h-2 w-2 rounded-full bg-orange-600" />
                 Expert site survey and positioning
               </li>
-              <li className="flex items-center gap-3 text-slate-700 font-medium">
+              <li className="flex items-center gap-3 font-medium text-slate-700">
                 <span className="h-2 w-2 rounded-full bg-orange-600" />
                 Professional installation & support
               </li>
@@ -303,26 +212,26 @@ export function BusinessHomepage() {
             <div className="mt-12 flex flex-wrap gap-5">
               <a
                 href="#products"
-                className="rounded-full bg-orange-600 px-8 py-4 text-sm font-bold uppercase tracking-widest text-white shadow-xl shadow-orange-300/50 transition hover:bg-orange-700 hover:-translate-y-1"
+                className="rounded-full bg-orange-600 px-8 py-4 text-sm font-bold uppercase tracking-widest text-white shadow-xl shadow-orange-300/50 transition hover:-translate-y-1 hover:bg-orange-700"
               >
                 View Products
               </a>
               <a
                 href="#contact"
-                className="rounded-full bg-red-600 px-8 py-4 text-sm font-bold uppercase tracking-widest text-white shadow-xl shadow-red-200/50 transition hover:bg-red-700 hover:-translate-y-1"
+                className="rounded-full bg-red-600 px-8 py-4 text-sm font-bold uppercase tracking-widest text-white shadow-xl shadow-red-200/50 transition hover:-translate-y-1 hover:bg-red-700"
               >
                 Get in Touch
               </a>
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1 }}
             className="relative h-[500px] lg:h-[600px]"
           >
-            <div className="absolute inset-0 overflow-hidden rounded-[3rem] shadow-2xl bg-gradient-to-b from-slate-100 to-slate-50 flex items-center justify-center">
+            <div className="absolute inset-0 flex items-center justify-center overflow-hidden rounded-[3rem] bg-gradient-to-b from-slate-100 to-slate-50 shadow-2xl">
               <img src="/images/hero-bg.png" alt="AKB Safety Signboards" className="h-full w-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900/30 via-transparent to-transparent" />
               <div className="absolute bottom-8 left-8 right-8 text-white">
@@ -330,16 +239,16 @@ export function BusinessHomepage() {
                 <p className="text-2xl font-black italic leading-tight">Business Growth</p>
               </div>
             </div>
-            
-            <div className="absolute -bottom-6 -left-6 glass-card rounded-3xl p-8 max-w-[240px] shadow-xl">
+
+            <div className="glass-card absolute -bottom-6 -left-6 max-w-[240px] rounded-3xl p-8 shadow-xl">
               <div className="text-4xl font-black text-orange-600">13+</div>
-              <p className="text-xs font-bold uppercase tracking-widest text-slate-600 mt-2 leading-relaxed">Years of Industry Excellence</p>
+              <p className="mt-2 text-xs font-bold uppercase leading-relaxed tracking-widest text-slate-600">Years of Industry Excellence</p>
             </div>
           </motion.div>
         </Container>
       </section>
 
-      <section className="relative -mt-10 z-10">
+      <section className="relative z-10 -mt-10">
         <Container>
           <div className="grid gap-6 rounded-3xl bg-slate-900 p-8 shadow-2xl sm:grid-cols-2 xl:grid-cols-4">
             {homepageStats.map((item, index) => (
@@ -349,7 +258,7 @@ export function BusinessHomepage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.4 }}
                 transition={{ delay: index * 0.08, duration: 0.45 }}
-                className="border-r border-slate-800 last:border-0 px-6"
+                className="border-r border-slate-800 px-6 last:border-0"
               >
                 <p className="text-5xl font-black tracking-tight text-white">{item.value}</p>
                 <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.2em] text-orange-500">{item.label}</p>
@@ -364,7 +273,7 @@ export function BusinessHomepage() {
           <SectionTitle
             eyebrow="Product Catalogue"
             title="Safety Signboard Solutions for Every Need"
-            text="From highway traffic boards to industrial safety signage and construction zone warnings—explore AKB's comprehensive range of specialized safety products designed for maximum visibility and compliance."
+            text="From highway traffic boards to industrial safety signage and construction zone warnings, explore AKB's current product range managed from the dashboard and served through the website catalog."
           />
 
           <div className="mt-10 grid gap-6 lg:grid-cols-3">
@@ -397,22 +306,22 @@ export function BusinessHomepage() {
                   className="group rounded-3xl border border-white bg-white p-2 shadow-sm transition hover:shadow-xl"
                 >
                   <div className="aspect-[16/10] overflow-hidden rounded-2xl bg-slate-100">
-                    <img src="/images/hero-bg.png" alt={work.title} className="h-full w-full object-cover grayscale transition duration-500 group-hover:grayscale-0 group-hover:scale-105" />
+                    <img src="/images/hero-bg.png" alt={work.title} className="h-full w-full object-cover grayscale transition duration-500 group-hover:scale-105 group-hover:grayscale-0" />
                   </div>
                   <div className="p-6">
                     <div className="flex items-center gap-2">
-                       <span className="h-1.5 w-1.5 rounded-full bg-orange-600" />
-                       <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                      <span className="h-1.5 w-1.5 rounded-full bg-orange-600" />
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
                         {work.location}
                       </span>
                     </div>
-                    <h3 className="mt-3 text-xl font-bold text-slate-900 group-hover:text-orange-600 transition-colors uppercase tracking-tight">{work.title}</h3>
-                    <p className="mt-3 text-sm font-bold text-slate-500 uppercase tracking-wider">
+                    <h3 className="mt-3 text-xl font-bold uppercase tracking-tight text-slate-900 transition-colors group-hover:text-orange-600">{work.title}</h3>
+                    <p className="mt-3 text-sm font-bold uppercase tracking-wider text-slate-500">
                       {work.client}
                     </p>
-                    <p className="mt-4 text-sm leading-relaxed text-slate-600 line-clamp-2">{work.summary}</p>
+                    <p className="line-clamp-2 mt-4 text-sm leading-relaxed text-slate-600">{work.summary}</p>
                     <div className="mt-6 flex items-center justify-between">
-                       <span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                      <span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-slate-500">
                         {work.status}
                       </span>
                       {linkedProduct ? (
@@ -420,7 +329,7 @@ export function BusinessHomepage() {
                           href={`/products/${linkedProduct.slug}`}
                           className="text-[11px] font-bold uppercase tracking-widest text-orange-600 hover:text-orange-700"
                         >
-                          View Board Details →
+                          View Board Details {"->"}
                         </Link>
                       ) : null}
                     </div>
@@ -433,7 +342,7 @@ export function BusinessHomepage() {
       </section>
 
       <section id="services" className="py-24 sm:py-32">
-        <Container className="grid gap-16 lg:grid-cols-[0.8fr_1.2fr] items-center">
+        <Container className="grid items-center gap-16 lg:grid-cols-[0.8fr_1.2fr]">
           <SectionTitle
             eyebrow="Our Services"
             title="End-to-End Signage Solutions"
@@ -450,12 +359,12 @@ export function BusinessHomepage() {
                 transition={{ delay: index * 0.08, duration: 0.45 }}
                 className="rounded-3xl border border-slate-100 bg-white p-8 shadow-sm transition hover:shadow-md"
               >
-                <div className="h-10 w-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600 mb-6">
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-orange-600">
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 uppercase tracking-tight">{service.title}</h3>
+                <h3 className="text-xl font-bold uppercase tracking-tight text-slate-900">{service.title}</h3>
                 <p className="mt-4 text-sm leading-relaxed text-slate-500">{service.description}</p>
               </motion.div>
             ))}
@@ -463,14 +372,14 @@ export function BusinessHomepage() {
         </Container>
       </section>
 
-      <section className="bg-slate-900 py-24 sm:py-32 overflow-hidden relative">
-        <div className="absolute inset-0 opacity-10 hero-grid" />
-        <Container className="grid gap-16 lg:grid-cols-[0.8fr_1.2fr] items-center relative z-10">
+      <section className="relative overflow-hidden bg-slate-900 py-24 sm:py-32">
+        <div className="hero-grid absolute inset-0 opacity-10" />
+        <Container className="relative z-10 grid items-center gap-16 lg:grid-cols-[0.8fr_1.2fr]">
           <div>
-             <p className="text-sm font-bold uppercase tracking-[0.28em] text-orange-500">
+            <p className="text-sm font-bold uppercase tracking-[0.28em] text-orange-500">
               Our Process
             </p>
-            <h2 className="mt-4 text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-6xl leading-tight">
+            <h2 className="mt-4 text-4xl font-black leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
               CONSULTATION TO <span className="text-orange-500">INSTALLATION</span>
             </h2>
             <p className="mt-6 text-lg leading-relaxed text-slate-400">
@@ -486,13 +395,13 @@ export function BusinessHomepage() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, amount: 0.35 }}
                 transition={{ delay: index * 0.08, duration: 0.45 }}
-                className="flex items-center gap-6 rounded-2xl bg-white/5 border border-white/10 p-6 backdrop-blur-sm"
+                className="flex items-center gap-6 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm"
               >
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-orange-600 text-lg font-black text-white">
                   {item.step}
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white uppercase tracking-tight">{item.title}</h3>
+                  <h3 className="text-lg font-bold uppercase tracking-tight text-white">{item.title}</h3>
                   <p className="mt-1 text-sm text-slate-400">{item.description}</p>
                 </div>
               </motion.div>
@@ -503,31 +412,31 @@ export function BusinessHomepage() {
 
       <section id="contact" className="py-24 sm:py-32">
         <Container>
-          <div className="overflow-hidden rounded-[3rem] bg-slate-900 p-10 lg:p-20 relative">
-            <div className="absolute top-0 right-0 w-1/2 h-full orange-gradient opacity-10 skew-x-12 translate-x-1/4" />
-            
-            <div className="grid gap-16 lg:grid-cols-[1.2fr_0.8fr] relative z-10">
+          <div className="relative overflow-hidden rounded-[3rem] bg-slate-900 p-10 lg:p-20">
+            <div className="orange-gradient absolute right-0 top-0 h-full w-1/2 translate-x-1/4 skew-x-12 opacity-10" />
+
+            <div className="relative z-10 grid gap-16 lg:grid-cols-[1.2fr_0.8fr]">
               <div>
                 <p className="text-sm font-bold uppercase tracking-[0.28em] text-orange-500">
                   Get in Touch
                 </p>
-                <h2 className="mt-6 text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-6xl leading-none">
+                <h2 className="mt-6 text-4xl font-black leading-none tracking-tight text-white sm:text-5xl lg:text-6xl">
                   Ready to enhance <span className="text-orange-500">safety?</span>
                 </h2>
-                <p className="mt-8 max-w-xl text-lg text-slate-400 font-medium">
-                  Contact AKB today for a free consultation, site survey, or custom quote. 
+                <p className="mt-8 max-w-xl text-lg font-medium text-slate-400">
+                  Contact AKB today for a free consultation, site survey, or custom quote.
                   Our team is ready to support your signage project from start to finish.
                 </p>
-                
+
                 <div className="mt-12 flex flex-wrap gap-8">
-                   <div className="flex flex-col">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">Availability</span>
-                      <span className="text-white font-bold">Pan-India Services</span>
-                   </div>
-                   <div className="flex flex-col">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">Compliance</span>
-                      <span className="text-white font-bold">IRC & MORTH Standard</span>
-                   </div>
+                  <div className="flex flex-col">
+                    <span className="mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-500">Availability</span>
+                    <span className="font-bold text-white">Pan-India Services</span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-500">Compliance</span>
+                    <span className="font-bold text-white">IRC & MORTH Standard</span>
+                  </div>
                 </div>
               </div>
 
@@ -536,15 +445,15 @@ export function BusinessHomepage() {
                   <a
                     key={option.label}
                     href={option.href}
-                    className="group flex items-center justify-between rounded-2xl bg-white/5 border border-white/10 p-6 transition hover:bg-orange-600"
+                    className="group flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:bg-orange-600"
                   >
                     <div className="flex flex-col">
-                      <span className="text-[11px] font-bold uppercase tracking-widest text-orange-500 group-hover:text-white transition-colors">
+                      <span className="text-[11px] font-bold uppercase tracking-widest text-orange-500 transition-colors group-hover:text-white">
                         {option.label}
                       </span>
-                      <span className="mt-1 text-lg font-bold text-white uppercase">{option.value}</span>
+                      <span className="mt-1 text-lg font-bold uppercase text-white">{option.value}</span>
                     </div>
-                    <svg className="w-5 h-5 text-white transform group-hover:translate-x-1 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="h-5 w-5 transform text-white transition group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7-7 7" />
                     </svg>
                   </a>
@@ -558,12 +467,12 @@ export function BusinessHomepage() {
       <footer className="border-t border-slate-100 bg-white py-12">
         <Container className="flex flex-col gap-6 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-             <div className="h-2 w-2 rounded-full bg-orange-600" />
-             <p className="font-bold text-slate-900 tracking-tight uppercase">{company.name} © {new Date().getFullYear()}</p>
+            <div className="h-2 w-2 rounded-full bg-orange-600" />
+            <p className="font-bold uppercase tracking-tight text-slate-900">{company.name} © {new Date().getFullYear()}</p>
           </div>
           <div className="flex items-center gap-6">
-            <p className="font-medium uppercase tracking-widest text-[11px]">{company.tagline}</p>
-            <Link href="/admin/login" className="text-xs font-semibold uppercase tracking-widest text-slate-500 hover:text-orange-600 transition">Admin</Link>
+            <p className="text-[11px] font-medium uppercase tracking-widest">{company.tagline}</p>
+            <Link href="/admin/login" className="text-xs font-semibold uppercase tracking-widest text-slate-500 transition hover:text-orange-600">Admin</Link>
           </div>
         </Container>
       </footer>

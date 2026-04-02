@@ -1,6 +1,6 @@
 import { Model, Schema, model, models } from "mongoose";
 
-export type StockItemRecord = {
+type StockItemRecord = {
   item: string;
   available: string;
   status: "Healthy" | "Low stock";

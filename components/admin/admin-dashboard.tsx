@@ -20,6 +20,7 @@ import {
   type Product,
   type WebWork,
 } from "@/data/web-catalog";
+import type { DashboardSnapshot } from "@/lib/dashboard-data";
 
 const SESSION_KEY = "safepath-admin-session";
 
@@ -77,17 +78,21 @@ const initialWebsiteWorkForm = {
   summary: "",
 };
 
-export function AdminDashboard() {
+type AdminDashboardProps = {
+  initialSnapshot?: Partial<DashboardSnapshot> & { mongoConfigured?: boolean };
+};
+
+export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
   const router = useRouter();
   const [ready, setReady] = useState(false);
-  const [works, setWorks] = useState<RunningWork[]>(demoRunningWorks);
-  const [completedJobs, setCompletedJobs] = useState<CompletedWork[]>(demoCompletedWorks);
-  const [orders, setOrders] = useState<OrderPayment[]>(demoOrderPayments);
-  const [inventory, setInventory] = useState<StockItem[]>(demoStockItems);
-  const [products, setProducts] = useState<Product[]>(demoProducts);
-  const [websiteVisibleWorks, setWebsiteVisibleWorks] = useState<WebWork[]>(demoWebsiteWorks);
+  const [works, setWorks] = useState<RunningWork[]>(initialSnapshot?.runningWorks ?? demoRunningWorks);
+  const [completedJobs, setCompletedJobs] = useState<CompletedWork[]>(initialSnapshot?.completedWorks ?? demoCompletedWorks);
+  const [orders, setOrders] = useState<OrderPayment[]>(initialSnapshot?.orderPayments ?? demoOrderPayments);
+  const [inventory, setInventory] = useState<StockItem[]>(initialSnapshot?.stockItems ?? demoStockItems);
+  const [products, setProducts] = useState<Product[]>(initialSnapshot?.products ?? demoProducts);
+  const [websiteVisibleWorks, setWebsiteVisibleWorks] = useState<WebWork[]>(initialSnapshot?.websiteWorks ?? demoWebsiteWorks);
   const [syncMessage, setSyncMessage] = useState("");
-  const [mongoConfigured, setMongoConfigured] = useState(true);
+  const [mongoConfigured, setMongoConfigured] = useState(initialSnapshot?.mongoConfigured ?? true);
   const [isSaving, setIsSaving] = useState(false);
   const [workForm, setWorkForm] = useState(initialWorkForm);
   const [orderForm, setOrderForm] = useState(initialOrderForm);
@@ -357,6 +362,14 @@ export function AdminDashboard() {
             </div>
           ))}
         </section>
+
+        <div className="rounded-[1.5rem] border border-orange-100 bg-orange-50 px-5 py-4 text-sm text-slate-700">
+          <span className="font-semibold text-slate-900">Database status:</span>{" "}
+          {syncMessage || (mongoConfigured
+            ? "Products and website works are loading from MongoDB."
+            : "MongoDB is not configured, so demo data is being shown.")}
+          {isSaving ? " Saving latest changes..." : ""}
+        </div>
 
         <section className="rounded-[2rem] border border-white bg-white p-6 shadow-[0_16px_50px_rgba(15,23,42,0.06)]">
           <p className="text-sm font-semibold uppercase tracking-[0.22em] text-orange-600">Website Content</p>

@@ -1,6 +1,6 @@
 import { Model, Schema, model, models } from "mongoose";
 
-export type RunningWorkRecord = {
+type RunningWorkRecord = {
   project: string;
   client: string;
   location: string;

@@ -1,13 +1,13 @@
 import { Model, Schema, model, models } from "mongoose";
 
-export type ProductProjectRecord = {
+type ProductProjectRecord = {
   title: string;
   client: string;
   location: string;
   summary: string;
 };
 
-export type ProductRecord = {
+type ProductRecord = {
   slug: string;
   name: string;
   category: string;

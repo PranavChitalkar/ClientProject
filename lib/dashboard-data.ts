@@ -32,6 +32,12 @@ export type DashboardSnapshot = {
   source: "database" | "demo";
 };
 
+export type WebsiteCatalogSnapshot = Pick<DashboardSnapshot, "products" | "websiteWorks" | "source">;
+
+function toPlainData<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T;
+}
+
 function cloneDemoData(): DashboardSnapshot {
   return {
     products: structuredClone(demoProducts),
@@ -71,13 +77,20 @@ export async function getDashboardData(): Promise<DashboardSnapshot> {
       StockItemModel.find().sort({ createdAt: -1, _id: -1 }).lean<StockItem[]>(),
     ]);
 
+  const plainProducts = toPlainData(products);
+  const plainWebsiteWorks = toPlainData(websiteWorks);
+  const plainRunningWorks = toPlainData(runningWorks);
+  const plainCompletedWorks = toPlainData(completedWorks);
+  const plainOrderPayments = toPlainData(orderPayments);
+  const plainStockItems = toPlainData(stockItems);
+
   const hasStoredData = [
-    products.length,
-    websiteWorks.length,
-    runningWorks.length,
-    completedWorks.length,
-    orderPayments.length,
-    stockItems.length,
+    plainProducts.length,
+    plainWebsiteWorks.length,
+    plainRunningWorks.length,
+    plainCompletedWorks.length,
+    plainOrderPayments.length,
+    plainStockItems.length,
   ].some((count) => count > 0);
 
   if (!hasStoredData) {
@@ -85,14 +98,34 @@ export async function getDashboardData(): Promise<DashboardSnapshot> {
   }
 
   return {
-    products,
-    websiteWorks,
-    runningWorks,
-    completedWorks,
-    orderPayments,
-    stockItems,
+    products: plainProducts,
+    websiteWorks: plainWebsiteWorks,
+    runningWorks: plainRunningWorks,
+    completedWorks: plainCompletedWorks,
+    orderPayments: plainOrderPayments,
+    stockItems: plainStockItems,
     source: "database",
   };
+}
+
+export async function getWebsiteCatalogData(): Promise<WebsiteCatalogSnapshot> {
+  try {
+    const snapshot = await getDashboardData();
+
+    return {
+      products: snapshot.products,
+      websiteWorks: snapshot.websiteWorks,
+      source: snapshot.source,
+    };
+  } catch {
+    const fallback = cloneDemoData();
+
+    return {
+      products: fallback.products,
+      websiteWorks: fallback.websiteWorks,
+      source: fallback.source,
+    };
+  }
 }
 
 export async function seedDashboardData(): Promise<DashboardSnapshot> {

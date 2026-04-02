@@ -15,24 +15,6 @@ export const stats = [
   { value: "13+", label: "Years of excellence in signage" },
 ];
 
-export const sectors = [
-  {
-    title: "National Highways & Expressways",
-    description:
-      "Traffic control signs, lane guidance boards, chevron warning systems, speed limit signs, kilometer markers, and reflective directional signs for seamless highway navigation.",
-  },
-  {
-    title: "Industrial Plants & Warehouses",
-    description:
-      "Hazard warning boards, PPE requirement signs, emergency assembly points, machinery warnings, loading zone markings, and internal safety communication systems.",
-  },
-  {
-    title: "Construction & Infrastructure Sites",
-    description:
-      "Traffic diversion boards, safety warnings, barricade signs, worker protection notices, site boundary markers, and temporary traffic management signage systems.",
-  },
-];
-
 export const services = [
   {
     title: "Safety Sign Design & Planning",
@@ -54,17 +36,6 @@ export const services = [
     description:
       "Complete installation service, structural alignment, periodic maintenance support, and immediate replacement service for damaged or worn signboards.",
   },
-];
-
-export const highlights = [
-  "Mandatory traffic & warning road signs",
-  "Industrial safety and hazard boards",
-  "Reflective and high-visibility signage",
-  "Factory route maps & navigation signs",
-  "Construction site safety signboards",
-  "Durable structures with long-term guarantee",
-  "ISO and safety standard compliant",
-  "Custom design & installation support",
 ];
 
 export const process = [
@@ -92,43 +63,6 @@ export const process = [
     description:
       "Professional installation by trained technicians, structural alignment verification, and ongoing maintenance support for your investment.",
   },
-];
-
-export const projects = [
-  {
-    title: "NH-48 Highway Safety Signage",
-    category: "National Highway Safety",
-    image: "/images/hero-bg.png",
-    description:
-      "Complete signage installation on 50km stretch including lane guidance, warning signs, kilometer markers, and emergency route markers.",
-  },
-  {
-    title: "Industrial Complex Safety Board Package",
-    category: "Industrial Safety System",
-    image: "/images/hero-bg.png",
-    description:
-      "Comprehensive safety signage for 200-acre industrial zone covering hazard warnings, PPE zones, emergency assembly points, and machinery caution boards.",
-  },
-  {
-    title: "Metro Construction Diversion Signage",
-    category: "Construction Zone Management",
-    image: "/images/hero-bg.png",
-    description:
-      "Temporary traffic diversion system with 150+ specialized boards for worker safety, traffic flow, and pedestrian guidance during active construction.",
-  },
-];
-
-export const reasons = [
-  "Clear communication for contractors, plant managers, project teams, and procurement departments",
-  "Strong presentation of actual signage services instead of generic portfolio wording",
-  "Bright business-focused design that feels clean, professional, and trustworthy",
-  "Frontend structure ready for future backend, ERP, CRM, or inquiry integrations",
-];
-
-export const companyOverview = [
-  "AKB is a leading manufacturer and installer of safety signboards serving highways, industrial plants, warehouses, and active construction zones across India.",
-  "We specialize in designing, fabricating, and installing high-visibility signboards that enhance safety, reduce accidents, and ensure regulatory compliance.",
-  "From small facility boards to large-scale highway signage, AKB delivers end-to-end solutions with expert planning, quality manufacturing, and professional installation.",
 ];
 
 export const contactOptions = [

@@ -1,6 +1,6 @@
 import { Model, Schema, model, models } from "mongoose";
 
-export type OrderPaymentRecord = {
+type OrderPaymentRecord = {
   orderId: string;
   client: string;
   totalAmount: number;

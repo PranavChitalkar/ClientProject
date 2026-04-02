@@ -1,6 +1,6 @@
 import { Model, Schema, model, models } from "mongoose";
 
-export type WebsiteWorkRecord = {
+type WebsiteWorkRecord = {
   id: string;
   title: string;
   client: string;
