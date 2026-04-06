@@ -1,9 +1,12 @@
 import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import {
+  addCompletedWorkRecord,
+  addOrderReceivedPaymentRecord,
   addOrderPaymentRecord,
   addProductRecord,
   addRunningWorkRecord,
+  addRunningWorkPaymentRecord,
   addWebsiteWorkRecord,
   getDashboardData,
   getDashboardDemoData,
@@ -12,6 +15,8 @@ import {
   removeProductRecord,
   removeWebsiteWorkRecord,
   seedDashboardData,
+  updateStockItemQuantityRecord,
+  updateCompletedWorkRecord,
 } from "@/lib/dashboard-data";
 
 export const dynamic = "force-dynamic";
@@ -23,7 +28,12 @@ type DashboardAction =
   | "addWebsiteWork"
   | "removeWebsiteWork"
   | "addRunningWork"
+  | "addCompletedWork"
+  | "updateCompletedWork"
+  | "addRunningWorkPayment"
+  | "addOrderReceivedPayment"
   | "addOrderPayment"
+  | "adjustStockItem"
   | "markPaymentReceived";
 
 export async function GET() {
@@ -91,8 +101,37 @@ export async function POST(request: NextRequest) {
       case "addRunningWork":
         await addRunningWorkRecord(body.payload as never);
         break;
+      case "addCompletedWork":
+        await addCompletedWorkRecord(body.payload as never);
+        break;
+      case "updateCompletedWork":
+        await updateCompletedWorkRecord(
+          (body.payload as { originalProject: string }).originalProject,
+          (body.payload as { originalClient: string }).originalClient,
+          (body.payload as { work: never }).work,
+        );
+        break;
+      case "addRunningWorkPayment":
+        await addRunningWorkPaymentRecord(
+          (body.payload as { project: string }).project,
+          (body.payload as { client: string }).client,
+          (body.payload as { amount: number }).amount,
+        );
+        break;
       case "addOrderPayment":
         await addOrderPaymentRecord(body.payload as never);
+        break;
+      case "addOrderReceivedPayment":
+        await addOrderReceivedPaymentRecord(
+          (body.payload as { orderId: string }).orderId,
+          (body.payload as { amount: number }).amount,
+        );
+        break;
+      case "adjustStockItem":
+        await updateStockItemQuantityRecord(
+          (body.payload as { item: string }).item,
+          (body.payload as { adjustment: number }).adjustment,
+        );
         break;
       case "markPaymentReceived":
         await markPaymentReceivedRecord((body.payload as { orderId: string }).orderId);
