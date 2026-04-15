@@ -67,7 +67,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.25 }}
       transition={{ delay: index * 0.06, duration: 0.45 }}
-      className="group overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+      className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm"
     >
       <div className="relative flex h-60 items-center justify-center bg-slate-50 p-8">
         {product.image ? (
@@ -88,7 +88,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
       </div>
 
       <div className="p-7">
-        <h3 className="text-xl font-bold uppercase tracking-tight text-slate-900 transition-colors group-hover:text-orange-600">
+        <h3 className="text-xl font-bold uppercase tracking-tight text-slate-900">
           {product.name}
         </h3>
         <p className="line-clamp-2 mt-3 text-sm leading-relaxed text-slate-500">
@@ -102,7 +102,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
           </div>
           <Link
             href={`/products/${product.slug}`}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white transition-all group-hover:scale-110 hover:bg-orange-600"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white transition-colors hover:bg-orange-600"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -306,7 +306,7 @@ export function BusinessHomepage({ initialCatalog }: BusinessHomepageProps) {
                   className="group rounded-3xl border border-white bg-white p-2 shadow-sm transition hover:shadow-xl"
                 >
                   <div className="aspect-[16/10] overflow-hidden rounded-2xl bg-slate-100">
-                    <img src="/images/hero-bg.png" alt={work.title} className="h-full w-full object-cover grayscale transition duration-500 group-hover:scale-105 group-hover:grayscale-0" />
+                    <img src={work.image || "/images/hero-bg.png"} alt={work.title} className="h-full w-full object-cover" />
                   </div>
                   <div className="p-6">
                     <div className="flex items-center gap-2">

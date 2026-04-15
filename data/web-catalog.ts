@@ -30,6 +30,7 @@ export type WebWork = {
   title: string;
   client: string;
   location: string;
+  image: string;
   productSlug: string;
   status: string;
   summary: string;
@@ -300,6 +301,7 @@ export const websiteWorks: WebWork[] = [
     title: "NH-48 Overhead Direction Boards",
     client: "Western Corridor Infra",
     location: "Pune - Satara",
+    image: "/images/hero-bg.png",
     productSlug: "retro-reflective-road-signs",
     status: "Fabrication in progress",
     summary:
@@ -310,6 +312,7 @@ export const websiteWorks: WebWork[] = [
     title: "Plant Safety Upgrade",
     client: "PrimeForge Industries",
     location: "Chakan MIDC",
+    image: "/images/hero-bg.png",
     productSlug: "industrial-safety-boards",
     status: "Installation scheduled",
     summary:
@@ -320,6 +323,7 @@ export const websiteWorks: WebWork[] = [
     title: "Metro Diversion Signage",
     client: "Urban Rail Contractors",
     location: "Nagpur",
+    image: "/images/hero-bg.png",
     productSlug: "construction-diversion-boards",
     status: "Material dispatch underway",
     summary:

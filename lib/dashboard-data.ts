@@ -188,6 +188,53 @@ function normalizeStockItem(item: Partial<StockItem>): StockItem {
   };
 }
 
+function normalizeProduct(product: Partial<Product>): Product {
+  const image = String(product.image ?? "").trim();
+  const gallery = Array.isArray(product.gallery)
+    ? product.gallery.map((item) => String(item ?? "").trim()).filter(Boolean)
+    : [];
+
+  return {
+    slug: String(product.slug ?? "").trim(),
+    name: String(product.name ?? "").trim(),
+    category: String(product.category ?? "").trim(),
+    image,
+    gallery: gallery.length ? gallery : image ? [image] : [],
+    shortDescription: String(product.shortDescription ?? "").trim(),
+    description: String(product.description ?? "").trim(),
+    size: String(product.size ?? "").trim(),
+    weight: String(product.weight ?? "").trim(),
+    pricing: String(product.pricing ?? "").trim(),
+    material: String(product.material ?? "").trim(),
+    thickness: String(product.thickness ?? "").trim(),
+    visibility: String(product.visibility ?? "").trim(),
+    warranty: String(product.warranty ?? "").trim(),
+    bestFor: Array.isArray(product.bestFor) ? product.bestFor.map((item) => String(item ?? "").trim()).filter(Boolean) : [],
+    features: Array.isArray(product.features) ? product.features.map((item) => String(item ?? "").trim()).filter(Boolean) : [],
+    realProjects: Array.isArray(product.realProjects)
+      ? product.realProjects.map((item) => ({
+        title: String(item?.title ?? "").trim(),
+        client: String(item?.client ?? "").trim(),
+        location: String(item?.location ?? "").trim(),
+        summary: String(item?.summary ?? "").trim(),
+      }))
+      : [],
+  };
+}
+
+function normalizeWebsiteWork(work: Partial<WebWork>): WebWork {
+  return {
+    id: String(work.id ?? "").trim(),
+    title: String(work.title ?? "").trim(),
+    client: String(work.client ?? "").trim(),
+    location: String(work.location ?? "").trim(),
+    image: String(work.image ?? "").trim(),
+    productSlug: String(work.productSlug ?? "").trim(),
+    status: String(work.status ?? "").trim(),
+    summary: String(work.summary ?? "").trim(),
+  };
+}
+
 function dedupeCompletedWorks(works: CompletedWork[]) {
   const seen = new Set<string>();
 
@@ -279,8 +326,8 @@ export async function getDashboardData(): Promise<DashboardSnapshot> {
       StockItemModel.find().sort({ createdAt: -1, _id: -1 }).lean<StockItem[]>(),
     ]);
 
-  const plainProducts = toPlainData(products);
-  const plainWebsiteWorks = toPlainData(websiteWorks);
+  const plainProducts = toPlainData(products).map((product) => normalizeProduct(product));
+  const plainWebsiteWorks = toPlainData(websiteWorks).map((work) => normalizeWebsiteWork(work));
   const plainRunningWorks = toPlainData(runningWorks).map((work) => normalizeRunningWork(work));
   const plainCompletedWorks = dedupeCompletedWorks(
     toPlainData(completedWorks).map((work) => normalizeCompletedWork(work)),
@@ -364,11 +411,38 @@ export async function addProductRecord(product: Product) {
   ensureMongoEnabled();
   await connectToDatabase();
 
+  const normalizedProduct = normalizeProduct(product);
+
   await ProductModel.findOneAndUpdate(
-    { slug: product.slug },
-    product,
+    { slug: normalizedProduct.slug },
+    normalizedProduct,
     { upsert: true, new: true, setDefaultsOnInsert: true },
   );
+}
+
+export async function updateProductRecord(originalSlug: string, product: Product) {
+  ensureMongoEnabled();
+  await connectToDatabase();
+
+  const normalizedProduct = normalizeProduct(product);
+
+  if (originalSlug === normalizedProduct.slug) {
+    await ProductModel.findOneAndUpdate(
+      { slug: originalSlug },
+      normalizedProduct,
+      { upsert: true, new: true, setDefaultsOnInsert: true },
+    );
+    return;
+  }
+
+  await Promise.all([
+    ProductModel.findOneAndUpdate(
+      { slug: originalSlug },
+      normalizedProduct,
+      { upsert: true, new: true, setDefaultsOnInsert: true },
+    ),
+    ProductModel.deleteOne({ slug: originalSlug }),
+  ]);
 }
 
 export async function removeProductRecord(slug: string) {
@@ -385,9 +459,11 @@ export async function addWebsiteWorkRecord(work: WebWork) {
   ensureMongoEnabled();
   await connectToDatabase();
 
+  const normalizedWork = normalizeWebsiteWork(work);
+
   await WebsiteWorkModel.findOneAndUpdate(
-    { id: work.id },
-    work,
+    { id: normalizedWork.id },
+    normalizedWork,
     { upsert: true, new: true, setDefaultsOnInsert: true },
   );
 }

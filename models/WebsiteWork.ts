@@ -5,6 +5,7 @@ type WebsiteWorkRecord = {
   title: string;
   client: string;
   location: string;
+  image: string;
   productSlug: string;
   status: string;
   summary: string;
@@ -16,6 +17,7 @@ const WebsiteWorkSchema = new Schema<WebsiteWorkRecord>(
     title: { type: String, required: true, trim: true },
     client: { type: String, required: true, trim: true },
     location: { type: String, required: true, trim: true },
+    image: { type: String, default: "" },
     productSlug: { type: String, required: true, trim: true },
     status: { type: String, required: true, trim: true },
     summary: { type: String, required: true, trim: true },

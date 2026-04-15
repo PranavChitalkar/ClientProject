@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ChangeEvent, FormEvent, ReactNode, useEffect, useMemo, useState } from "react";
+import { FormEvent, ReactNode, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   completedWorks as demoCompletedWorks,
@@ -146,7 +146,7 @@ const initialProductForm = {
   slug: "",
   name: "",
   category: "",
-  image: "",
+  image: "/images/highway-guidance.svg",
   shortDescription: "",
   description: "",
   size: "",
@@ -213,7 +213,6 @@ export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
   const [selectedOrderId, setSelectedOrderId] = useState("");
   const [selectedStockItem, setSelectedStockItem] = useState("");
   const [editingCompletedWorkRef, setEditingCompletedWorkRef] = useState<{ project: string; client: string } | null>(null);
-  const [editingProductSlug, setEditingProductSlug] = useState<string | null>(null);
   const [works, setWorks] = useState<RunningWork[]>(initialSnapshot?.runningWorks ?? demoRunningWorks);
   const [completedJobs, setCompletedJobs] = useState<CompletedWork[]>(initialSnapshot?.completedWorks ?? demoCompletedWorks);
   const [orders, setOrders] = useState<OrderPayment[]>(initialSnapshot?.orderPayments ?? demoOrderPayments);
@@ -232,82 +231,6 @@ export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
   const [productForm, setProductForm] = useState(initialProductForm);
   const [websiteWorkForm, setWebsiteWorkForm] = useState(initialWebsiteWorkForm);
 
-  async function handleProductImageChange(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-
-    if (!file) {
-      setProductForm((current) => ({ ...current, image: "" }));
-      return;
-    }
-
-    if (!file.type.startsWith("image/")) {
-      setSyncMessage("Please choose a valid image file for the product.");
-      event.target.value = "";
-      return;
-    }
-
-    try {
-      const imageData = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-
-        reader.onload = () => {
-          if (typeof reader.result === "string") {
-            resolve(reader.result);
-            return;
-          }
-
-          reject(new Error("Unable to read the selected image."));
-        };
-
-        reader.onerror = () => reject(new Error("Unable to read the selected image."));
-        reader.readAsDataURL(file);
-      });
-
-      setProductForm((current) => ({ ...current, image: imageData }));
-      setSyncMessage(`Selected product image: ${file.name}`);
-    } catch (error) {
-      setSyncMessage(error instanceof Error ? error.message : "Unable to read the selected image.");
-    }
-  }
-
-  async function handleWebsiteWorkImageChange(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-
-    if (!file) {
-      setWebsiteWorkForm((current) => ({ ...current, image: "" }));
-      return;
-    }
-
-    if (!file.type.startsWith("image/")) {
-      setSyncMessage("Please choose a valid image file for the website work.");
-      event.target.value = "";
-      return;
-    }
-
-    try {
-      const imageData = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-
-        reader.onload = () => {
-          if (typeof reader.result === "string") {
-            resolve(reader.result);
-            return;
-          }
-
-          reject(new Error("Unable to read the selected image."));
-        };
-
-        reader.onerror = () => reject(new Error("Unable to read the selected image."));
-        reader.readAsDataURL(file);
-      });
-
-      setWebsiteWorkForm((current) => ({ ...current, image: imageData }));
-      setSyncMessage(`Selected website work image: ${file.name}`);
-    } catch (error) {
-      setSyncMessage(error instanceof Error ? error.message : "Unable to read the selected image.");
-    }
-  }
-
   function startEditingCompletedWork(work: CompletedWork) {
     setEditingCompletedWorkRef({ project: work.project, client: work.client });
     setShowCompletedWorkForm(true);
@@ -324,34 +247,6 @@ export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
     setCompletedWorkForm(initialCompletedWorkForm);
     setEditingCompletedWorkRef(null);
     setShowCompletedWorkForm(false);
-  }
-
-  function startEditingProduct(product: Product) {
-    setProductForm({
-      slug: product.slug,
-      name: product.name,
-      category: product.category,
-      image: product.image,
-      shortDescription: product.shortDescription,
-      description: product.description,
-      size: product.size,
-      weight: product.weight,
-      pricing: product.pricing,
-      material: product.material,
-      thickness: product.thickness,
-      visibility: product.visibility,
-      warranty: product.warranty,
-      bestFor: product.bestFor.join(", "),
-      features: product.features.join(", "),
-    });
-    setEditingProductSlug(product.slug);
-    setShowProductForm(true);
-  }
-
-  function resetProductEditor() {
-    setProductForm(initialProductForm);
-    setEditingProductSlug(null);
-    setShowProductForm(false);
   }
 
   function applySnapshot(snapshot: DashboardApiResponse) {
@@ -560,8 +455,8 @@ export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
       slug,
       name: productForm.name.trim(),
       category: productForm.category.trim(),
-      image: productForm.image.trim(),
-      gallery: productForm.image.trim() ? [productForm.image.trim()] : [],
+      image: productForm.image,
+      gallery: [productForm.image, productForm.image, productForm.image],
       shortDescription: productForm.shortDescription.trim(),
       description: productForm.description.trim(),
       size: productForm.size.trim(),
@@ -576,15 +471,11 @@ export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
       realProjects: [],
     };
 
-    const action = editingProductSlug ? "updateProduct" : "addProduct";
-    const payload = editingProductSlug
-      ? { originalSlug: editingProductSlug, product: nextProduct }
-      : nextProduct;
-
-    const wasSaved = await persistDashboardAction(action, payload);
+    const wasSaved = await persistDashboardAction("addProduct", nextProduct);
 
     if (wasSaved) {
-      resetProductEditor();
+      setProductForm(initialProductForm);
+      setShowProductForm(false);
     }
   }
 
@@ -666,7 +557,7 @@ export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
 
     if (wasSaved) {
       setOrderPaymentAddForm(initialOrderPaymentAddForm);
-      setSelectedOrderId(order.orderId);
+      setSelectedOrderId("");
     }
   }
 
@@ -790,7 +681,13 @@ export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
               })}
             </nav>
 
-            
+            <div className="mt-4 rounded-[1.25rem] border border-orange-100 bg-orange-50 px-4 py-4 text-sm text-slate-700">
+              <span className="font-semibold text-slate-900">Database status:</span>{" "}
+              {syncMessage || (mongoConfigured
+                ? "Products and website works are loading from MongoDB."
+                : "MongoDB is not configured, so demo data is being shown.")}
+              {isSaving ? " Saving latest changes..." : ""}
+            </div>
           </div>
         </aside>
 
@@ -1160,14 +1057,7 @@ export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
               <div className="mt-6 space-y-4">
                 {orders.length ? orders.map((order) => (
                   <div key={order.orderId} className="rounded-[1.5rem] border border-slate-100 bg-slate-50 p-5">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedOrderId((current) => (current === order.orderId ? "" : order.orderId));
-                        setOrderPaymentAddForm(initialOrderPaymentAddForm);
-                      }}
-                      className="flex w-full flex-col gap-2 text-left sm:flex-row sm:items-center sm:justify-between"
-                    >
+                    <button type="button" onClick={() => setSelectedOrderId((current) => current === order.orderId ? "" : order.orderId)} className="flex w-full flex-col gap-2 text-left sm:flex-row sm:items-center sm:justify-between">
                       <div>
                         <h3 className="text-lg font-semibold text-slate-900">{order.orderId}</h3>
                         <p className="text-sm text-slate-600">{order.client}</p>
@@ -1217,22 +1107,6 @@ export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
                     <input required placeholder="Client" value={websiteWorkForm.client} onChange={(event) => setWebsiteWorkForm((current) => ({ ...current, client: event.target.value }))} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none" />
                     <input required placeholder="Location" value={websiteWorkForm.location} onChange={(event) => setWebsiteWorkForm((current) => ({ ...current, location: event.target.value }))} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none" />
                   </div>
-                  <div className="grid gap-3">
-                    <label className="text-sm font-semibold text-slate-700">Work image</label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(event) => void handleWebsiteWorkImageChange(event)}
-                      className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none file:mr-4 file:rounded-full file:border-0 file:bg-orange-100 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-orange-700"
-                    />
-                    {websiteWorkForm.image ? (
-                      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white p-3">
-                        <img src={websiteWorkForm.image} alt="Website work preview" className="h-40 w-full object-contain" />
-                      </div>
-                    ) : (
-                      <p className="text-sm text-slate-500">Choose an image to store with this website work in the database.</p>
-                    )}
-                  </div>
                   <select required value={websiteWorkForm.productSlug} onChange={(event) => setWebsiteWorkForm((current) => ({ ...current, productSlug: event.target.value }))} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none">
                     <option value="">Select linked product</option>
                     {products.map((product) => <option key={product.slug} value={product.slug}>{product.name}</option>)}
@@ -1251,11 +1125,6 @@ export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
                     <div key={work.id} className="rounded-[1.5rem] border border-slate-100 bg-slate-50 p-5">
                       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                         <div>
-                          {work.image ? (
-                            <div className="mb-4 overflow-hidden rounded-2xl border border-slate-200 bg-white p-2">
-                              <img src={work.image} alt={work.title} className="h-40 w-full object-cover" />
-                            </div>
-                          ) : null}
                           <h3 className="text-lg font-semibold text-slate-900">{work.title}</h3>
                           <p className="mt-1 text-sm text-slate-600">{work.client} - {work.location}</p>
                           <p className="mt-3 text-sm leading-7 text-slate-600">{work.summary}</p>
@@ -1277,18 +1146,7 @@ export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
                 title="Manage website product catalog"
                 description="Product creation is now moved out of the dashboard into this dedicated sidebar section."
                 action={
-                  <button
-                  type="button"
-                  onClick={() => {
-                    if (editingProductSlug) {
-                      resetProductEditor();
-                      return;
-                    }
-
-                    setShowProductForm((current) => !current);
-                  }}
-                  className="rounded-full bg-gradient-to-r from-orange-600 to-red-600 px-5 py-3 text-sm font-semibold text-white transition hover:from-orange-700 hover:to-red-700"
-                >
+                  <button type="button" onClick={() => setShowProductForm((current) => !current)} className="rounded-full bg-gradient-to-r from-orange-600 to-red-600 px-5 py-3 text-sm font-semibold text-white transition hover:from-orange-700 hover:to-red-700">
                     {showProductForm ? "Close Form" : "Add Product"}
                   </button>
                 }
@@ -1296,35 +1154,17 @@ export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
 
               {showProductForm ? (
                 <form onSubmit={handleAddProduct} className="mt-6 grid gap-4 rounded-[1.5rem] border border-orange-100 bg-orange-50/70 p-5">
-                  <div className="flex flex-wrap items-center justify-between gap-4">
-                    <h3 className="text-lg font-semibold text-slate-900">{editingProductSlug ? "Edit Product" : "Add Product"}</h3>
-                    {editingProductSlug ? (
-                      <button type="button" onClick={resetProductEditor} className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100">
-                        Cancel edit
-                      </button>
-                    ) : null}
-                  </div>
+                  <h3 className="text-lg font-semibold text-slate-900">Add Product</h3>
                   <input required placeholder="Product name" value={productForm.name} onChange={(event) => setProductForm((current) => ({ ...current, name: event.target.value }))} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none" />
                   <div className="grid gap-4 md:grid-cols-2">
                     <input required placeholder="Category" value={productForm.category} onChange={(event) => setProductForm((current) => ({ ...current, category: event.target.value }))} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none" />
                     <input placeholder="Slug optional" value={productForm.slug} onChange={(event) => setProductForm((current) => ({ ...current, slug: event.target.value }))} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none" />
                   </div>
-                  <div className="grid gap-3">
-                    <label className="text-sm font-semibold text-slate-700">Product image</label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(event) => void handleProductImageChange(event)}
-                      className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none file:mr-4 file:rounded-full file:border-0 file:bg-orange-100 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-orange-700"
-                    />
-                    {productForm.image ? (
-                      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white p-3">
-                        <img src={productForm.image} alt="Product preview" className="h-40 w-full object-contain" />
-                      </div>
-                    ) : (
-                      <p className="text-sm text-slate-500">Choose an image to store with this product in the database.</p>
-                    )}
-                  </div>
+                  <select value={productForm.image} onChange={(event) => setProductForm((current) => ({ ...current, image: event.target.value }))} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none">
+                    <option value="/images/highway-guidance.svg">Highway board image</option>
+                    <option value="/images/factory-safety.svg">Factory safety image</option>
+                    <option value="/images/construction-diversion.svg">Construction image</option>
+                  </select>
                   <textarea required rows={3} placeholder="Short description" value={productForm.shortDescription} onChange={(event) => setProductForm((current) => ({ ...current, shortDescription: event.target.value }))} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none" />
                   <textarea required rows={4} placeholder="Full description" value={productForm.description} onChange={(event) => setProductForm((current) => ({ ...current, description: event.target.value }))} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none" />
                   <div className="grid gap-4 md:grid-cols-2">
@@ -1342,7 +1182,7 @@ export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
                   <input required placeholder="Warranty / support" value={productForm.warranty} onChange={(event) => setProductForm((current) => ({ ...current, warranty: event.target.value }))} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none" />
                   <input required placeholder="Best for, comma separated" value={productForm.bestFor} onChange={(event) => setProductForm((current) => ({ ...current, bestFor: event.target.value }))} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none" />
                   <input required placeholder="Features, comma separated" value={productForm.features} onChange={(event) => setProductForm((current) => ({ ...current, features: event.target.value }))} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none" />
-                  <button type="submit" className="rounded-2xl bg-gradient-to-r from-orange-600 to-red-600 px-5 py-3 text-sm font-semibold text-white transition hover:from-orange-700 hover:to-red-700">{editingProductSlug ? "Save product changes" : "Add Product to Website"}</button>
+                  <button type="submit" className="rounded-2xl bg-gradient-to-r from-orange-600 to-red-600 px-5 py-3 text-sm font-semibold text-white transition hover:from-orange-700 hover:to-red-700">Add Product to Website</button>
                 </form>
               ) : null}
 
@@ -1358,7 +1198,6 @@ export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
                       </div>
                       <div className="flex flex-wrap gap-2">
                         <Link href={`/products/${product.slug}`} className="rounded-full border border-orange-200 bg-white px-4 py-2 text-xs font-semibold text-orange-700 transition hover:bg-orange-50">Open Page</Link>
-                        <button type="button" onClick={() => startEditingProduct(product)} className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100">Edit</button>
                         <button type="button" onClick={() => void removeProduct(product.slug)} className="rounded-full bg-rose-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-rose-700">Remove</button>
                       </div>
                     </div>

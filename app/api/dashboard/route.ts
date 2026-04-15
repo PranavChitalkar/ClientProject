@@ -15,6 +15,7 @@ import {
   removeProductRecord,
   removeWebsiteWorkRecord,
   seedDashboardData,
+  updateProductRecord,
   updateStockItemQuantityRecord,
   updateCompletedWorkRecord,
 } from "@/lib/dashboard-data";
@@ -30,6 +31,7 @@ type DashboardAction =
   | "addRunningWork"
   | "addCompletedWork"
   | "updateCompletedWork"
+  | "updateProduct"
   | "addRunningWorkPayment"
   | "addOrderReceivedPayment"
   | "addOrderPayment"
@@ -88,6 +90,12 @@ export async function POST(request: NextRequest) {
         break;
       case "addProduct":
         await addProductRecord(body.payload as never);
+        break;
+      case "updateProduct":
+        await updateProductRecord(
+          (body.payload as { originalSlug: string }).originalSlug,
+          (body.payload as { product: unknown }).product as never,
+        );
         break;
       case "removeProduct":
         await removeProductRecord((body.payload as { slug: string }).slug);
