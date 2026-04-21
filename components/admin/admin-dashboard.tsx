@@ -22,8 +22,6 @@ import {
 } from "@/data/web-catalog";
 import type { DashboardSnapshot } from "@/lib/dashboard-data";
 
-const SESSION_KEY = "safepath-admin-session";
-
 type DashboardApiResponse = {
   ok: boolean;
   message?: string;
@@ -200,6 +198,28 @@ function EmptyState({ message }: { message: string }) {
   );
 }
 
+function AdminPrimaryButton({
+  children,
+  type = "button",
+  onClick,
+  className = "",
+}: {
+  children: ReactNode;
+  type?: "button" | "submit";
+  onClick?: () => void;
+  className?: string;
+}) {
+  return (
+    <button
+      type={type}
+      onClick={onClick}
+      className={`rounded-full bg-gradient-to-r from-orange-600 to-red-600 px-5 py-3 text-sm font-semibold text-white transition hover:from-orange-700 hover:to-red-700 ${className}`}
+    >
+      {children}
+    </button>
+  );
+}
+
 export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
   const router = useRouter();
   const [ready, setReady] = useState(false);
@@ -231,6 +251,8 @@ export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
   const [orderForm, setOrderForm] = useState(initialOrderForm);
   const [productForm, setProductForm] = useState(initialProductForm);
   const [websiteWorkForm, setWebsiteWorkForm] = useState(initialWebsiteWorkForm);
+
+  // (auth + data load handled in a single effect further below)
 
   async function handleProductImageChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -387,6 +409,10 @@ export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
   async function loadDashboardData() {
     try {
       const response = await fetch("/api/dashboard", { cache: "no-store" });
+      if (response.status === 401) {
+        router.replace("/admin/login");
+        return;
+      }
       const data = (await response.json()) as DashboardApiResponse;
       applySnapshot(data);
 
@@ -434,17 +460,11 @@ export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
   }
 
   useEffect(() => {
-    const session = localStorage.getItem(SESSION_KEY);
-    if (session !== "active") {
-      router.replace("/admin/login");
-      return;
-    }
-
     void loadDashboardData();
   }, [router]);
 
-  function handleLogout() {
-    localStorage.removeItem(SESSION_KEY);
+  async function handleLogout() {
+    await fetch("/api/admin/logout", { method: "POST" });
     router.push("/admin/login");
   }
 
@@ -754,9 +774,13 @@ export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <a href="/" className="rounded-full border border-orange-200 bg-orange-50 px-5 py-3 text-sm font-semibold text-orange-700 transition hover:bg-orange-100">View Website</a>
-            <button onClick={handleLogout} className="rounded-full bg-gradient-to-r from-orange-600 to-red-600 px-5 py-3 text-sm font-semibold text-white transition hover:from-orange-700 hover:to-red-700">
-              Logout
-            </button>
+            <a
+              href="/admin/forgot-password"
+              className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            >
+              Forgot Password
+            </a>
+            <AdminPrimaryButton onClick={handleLogout}>Logout</AdminPrimaryButton>
           </div>
         </div>
       </div>
@@ -957,9 +981,9 @@ export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
                 title="Manage internal project execution"
                 description="Click any running work to open full project details, payment tracking, and a direct add-payment action that updates MongoDB."
                 action={
-                  <button type="button" onClick={() => setShowWorkForm((current) => !current)} className="rounded-full bg-gradient-to-r from-orange-600 to-red-600 px-5 py-3 text-sm font-semibold text-white transition hover:from-orange-700 hover:to-red-700">
+                  <AdminPrimaryButton onClick={() => setShowWorkForm((current) => !current)}>
                     {showWorkForm ? "Close Form" : "Add Running Work"}
-                  </button>
+                  </AdminPrimaryButton>
                 }
               />
 
@@ -1064,9 +1088,9 @@ export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
                 title="Warranty and service tracking"
                 description="Add completed projects here. Warranty starts from the project completion date and the valid-till date is calculated automatically."
                 action={
-                  <button type="button" onClick={() => showCompletedWorkForm ? resetCompletedWorkEditor() : setShowCompletedWorkForm(true)} className="rounded-full bg-gradient-to-r from-orange-600 to-red-600 px-5 py-3 text-sm font-semibold text-white transition hover:from-orange-700 hover:to-red-700">
+                  <AdminPrimaryButton onClick={() => showCompletedWorkForm ? resetCompletedWorkEditor() : setShowCompletedWorkForm(true)}>
                     {showCompletedWorkForm ? "Close Form" : "Add Completed Work"}
-                  </button>
+                  </AdminPrimaryButton>
                 }
               />
 
@@ -1117,9 +1141,9 @@ export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
                 title="Manage billing records"
                 description="This page keeps the form and the list together. Use the button to open the add form only when you need it."
                 action={
-                  <button type="button" onClick={() => setShowOrderForm((current) => !current)} className="rounded-full bg-gradient-to-r from-orange-600 to-red-600 px-5 py-3 text-sm font-semibold text-white transition hover:from-orange-700 hover:to-red-700">
+                  <AdminPrimaryButton onClick={() => setShowOrderForm((current) => !current)}>
                     {showOrderForm ? "Close Form" : "Add Order / Payment"}
-                  </button>
+                  </AdminPrimaryButton>
                 }
               />
 
@@ -1204,9 +1228,9 @@ export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
                 title="Manage website portfolio items"
                 description="Website works are now separated from the main dashboard so the overview page stays clean."
                 action={
-                  <button type="button" onClick={() => setShowWebsiteWorkForm((current) => !current)} className="rounded-full bg-gradient-to-r from-orange-600 to-red-600 px-5 py-3 text-sm font-semibold text-white transition hover:from-orange-700 hover:to-red-700">
+                  <AdminPrimaryButton onClick={() => setShowWebsiteWorkForm((current) => !current)}>
                     {showWebsiteWorkForm ? "Close Form" : "Add Website Work"}
-                  </button>
+                  </AdminPrimaryButton>
                 }
               />
 
@@ -1277,20 +1301,17 @@ export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
                 title="Manage website product catalog"
                 description="Product creation is now moved out of the dashboard into this dedicated sidebar section."
                 action={
-                  <button
-                  type="button"
-                  onClick={() => {
-                    if (editingProductSlug) {
-                      resetProductEditor();
-                      return;
-                    }
-
-                    setShowProductForm((current) => !current);
-                  }}
-                  className="rounded-full bg-gradient-to-r from-orange-600 to-red-600 px-5 py-3 text-sm font-semibold text-white transition hover:from-orange-700 hover:to-red-700"
-                >
+                  <AdminPrimaryButton
+                    onClick={() => {
+                      if (editingProductSlug) {
+                        resetProductEditor();
+                        return;
+                      }
+                      setShowProductForm((current) => !current);
+                    }}
+                  >
                     {showProductForm ? "Close Form" : "Add Product"}
-                  </button>
+                  </AdminPrimaryButton>
                 }
               />
 

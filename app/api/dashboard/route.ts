@@ -1,4 +1,5 @@
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import {
   addCompletedWorkRecord,
@@ -19,6 +20,7 @@ import {
   updateStockItemQuantityRecord,
   updateCompletedWorkRecord,
 } from "@/lib/dashboard-data";
+import { getAdminUserFromSessionToken, getSessionCookieName } from "@/lib/admin-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +41,13 @@ type DashboardAction =
   | "markPaymentReceived";
 
 export async function GET() {
+  const cookieStore = await cookies();
+  const sessionToken = cookieStore.get(getSessionCookieName())?.value;
+  const user = await getAdminUserFromSessionToken(sessionToken);
+  if (!user) {
+    return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const snapshot = await getDashboardData();
 
@@ -64,6 +73,12 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const sessionToken = request.cookies.get(getSessionCookieName())?.value;
+  const user = await getAdminUserFromSessionToken(sessionToken);
+  if (!user) {
+    return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const body = (await request.json()) as {
       action?: DashboardAction;
