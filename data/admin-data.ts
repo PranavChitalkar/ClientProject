@@ -44,7 +44,7 @@ export type OrderPayment = {
 };
 
 export const adminCredentials = {
-  email: "admin@safepathsigns.com",
+  email: "admin@matoshreeengineering.com",
   password: "Admin@123",
 };
 

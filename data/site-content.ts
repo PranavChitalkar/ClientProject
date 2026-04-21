@@ -1,67 +1,67 @@
 export const company = {
-  name: "AKB",
-  tagline: "Premium Safety Signboards for Roads, Industries & Construction",
+  name: "MATOSHREE ENGINEERING",
+  tagline: "All Type of Fabrication Works & Manufacturer of Retroreflective Sign Boards",
   phone: "+91 9146531857",
-  email: "info@akbroadboards.com",
+  email: "info@matoshreeengineering.com",
   address: "Pune, Maharashtra, India",
   whatsapp: "+91 9146531857",
   since: "2011",
 };
 
 export const stats = [
-  { value: "5000+", label: "Signboards manufactured and installed" },
+  { value: "5000+", label: "Retroreflective boards manufactured and installed" },
   { value: "250+", label: "Satisfied clients across India" },
   { value: "99%", label: "On-time project completion rate" },
-  { value: "13+", label: "Years of excellence in signage" },
+  { value: "13+", label: "Years of excellence in fabrication & signage" },
 ];
 
 export const services = [
   {
-    title: "Safety Sign Design & Planning",
+    title: "Retroreflective Signboard Design & Planning",
     description:
-      "Custom-designed signboards optimized for visibility, compliance with traffic regulations, and installation on highways, industrial sites, and construction zones.",
+      "Custom-designed retroreflective boards optimized for visibility, compliance with traffic regulations, and installation on highways, industrial sites, and construction zones.",
   },
   {
-    title: "Expert Fabrication",
+    title: "Precision Fabrication Services",
     description:
-      "High-quality manufacturing using reflective sheeting, ACP panels, MS structures, GI poles, and durable finishes built to withstand harsh outdoor conditions.",
+      "High-quality manufacturing of retroreflective sign boards using premium reflective sheeting, ACP panels, MS structures, GI poles, and durable finishes built to withstand harsh outdoor conditions.",
   },
   {
-    title: "Site Survey & Positioning",
+    title: "Site Assessment & Installation Planning",
     description:
-      "Professional on-site assessment to determine optimal placement, visibility angles, and installation requirements for maximum impact and safety.",
+      "Professional on-site assessment to determine optimal placement, visibility angles, and installation requirements for maximum impact, safety, and compliance.",
   },
   {
-    title: "Professional Installation & Maintenance",
+    title: "Professional Installation & Aftercare Support",
     description:
-      "Complete installation service, structural alignment, periodic maintenance support, and immediate replacement service for damaged or worn signboards.",
+      "Expert installation by trained technicians, structural alignment verification, periodic maintenance, inspection, and prompt replacement service for all fabricated sign boards.",
   },
 ];
 
 export const process = [
   {
     step: "01",
-    title: "Project Consultation",
+    title: "Requirement Consultation",
     description:
-      "We understand your signage requirements, site conditions, safety objectives, and specific board types needed for your location.",
+      "We understand your fabrication and signage requirements, site conditions, safety objectives, and specifications for retroreflective boards needed for your location.",
   },
   {
     step: "02",
-    title: "Site Analysis & Design",
+    title: "Design & Site Planning",
     description:
-      "Our team conducts a site visit, plans optimal board positions, determines sizing, and designs signboards that comply with safety standards.",
+      "Our expert team conducts a site survey, plans optimal placement, determines precise sizing, and designs retroreflective signboards that comply with all safety standards.",
   },
   {
     step: "03",
-    title: "Manufacturing & Quality Check",
+    title: "Precision Fabrication & QC",
     description:
-      "Signboards are fabricated with precision using premium reflective materials, tested for durability, and finished to perfection.",
+      "Retroreflective boards are fabricated with precision engineering using premium materials, rigorously tested for durability, and finished to absolute perfection.",
   },
   {
     step: "04",
-    title: "Expert Installation & Support",
+    title: "Installation & Long-term Support",
     description:
-      "Professional installation by trained technicians, structural alignment verification, and ongoing maintenance support for your investment.",
+      "Professional installation by our trained technicians, structural verification, and comprehensive aftercare support and maintenance for your fabricated sign boards.",
   },
 ];
 

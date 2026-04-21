@@ -33,9 +33,9 @@ export function AdminLoginForm() {
       <div className="mb-6">
         <div className="mb-4 flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-red-600 text-xs font-black text-white">
-            AKB
+            ME
           </div>
-          <p className="text-lg font-black uppercase tracking-tight text-slate-900">AKB Admin</p>
+          <p className="text-lg font-black uppercase tracking-tight text-slate-900">MATOSHREE Admin</p>
         </div>
         <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
           Login to the admin dashboard

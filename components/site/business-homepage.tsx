@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "motion/react";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   company,
   contactOptions,
@@ -118,9 +118,39 @@ type BusinessHomepageProps = {
   initialCatalog?: WebsiteCatalogSnapshot;
 };
 
+const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  e.preventDefault();
+  const element = document.querySelector(href);
+  if (element) {
+    element.scrollIntoView({ behavior: "smooth" });
+  }
+};
+
 export function BusinessHomepage({ initialCatalog }: BusinessHomepageProps) {
   const products: Product[] = initialCatalog?.products ?? [];
   const works: WebWork[] = initialCatalog?.websiteWorks ?? [];
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isMobileMenuOpen]);
 
   const homepageStats = useMemo(
     () => [
@@ -130,49 +160,122 @@ export function BusinessHomepage({ initialCatalog }: BusinessHomepageProps) {
     [products],
   );
 
+  const navLinks = [
+    { href: "#products", label: "Products" },
+    { href: "#works", label: "Portfolio" },
+    { href: "#services", label: "Services" },
+    { href: "#contact", label: "Contact" },
+  ];
+
   return (
     <main className="relative overflow-hidden bg-white text-slate-900">
       <FloatingBackground />
 
-      <header className="sticky top-0 z-30 border-b border-sky-100/80 bg-white/80 backdrop-blur-xl">
-        <Container className="flex min-h-20 items-center justify-between gap-6">
-          <a href="#top" className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-red-600 text-sm font-black text-white shadow-lg shadow-red-200/50">
-              AKB
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-1000 w-full ${
+          isScrolled
+            ? "bg-white lg:bg-white/30 border-b border-slate-100 lg:border-b-0 lg:backdrop-blur-lg"
+            : "border-b border-sky-100/80 bg-white/80 backdrop-blur-xl"
+        }`}
+      >
+        <Container className="flex min-h-20 items-center justify-between gap-4">
+          <a href="#top" className="flex items-center gap-2 flex-shrink-0">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-red-600 text-xs font-black text-white shadow-lg shadow-red-200/50">
+              ME
             </div>
-            <div>
-              <p className="text-lg leading-none font-black uppercase tracking-tight text-slate-900">
-                AKB
+            <div className="hidden sm:block">
+              <p className="text-base leading-none font-black uppercase tracking-tight text-slate-900">
+                MATOSHREE
               </p>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-orange-600">Safety Signboards</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-orange-600">Engineering</p>
             </div>
           </a>
 
-          <nav className="hidden items-center gap-10 text-[13px] font-bold uppercase tracking-widest text-slate-500 lg:flex">
-            <a href="#products" className="transition hover:text-orange-600">
-              Products
-            </a>
-            <a href="#works" className="transition hover:text-orange-600">
-              Portfolio
-            </a>
-            <a href="#services" className="transition hover:text-orange-600">
-              Services
-            </a>
-            <a href="#contact" className="transition hover:text-orange-600">
-              Contact
-            </a>
+          <nav className="hidden items-center gap-8 text-[12px] font-bold uppercase tracking-widest text-slate-600 lg:flex">
+            {navLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={(e) => scrollToSection(e, link.href)}
+                className="transition hover:text-orange-600 hover:scale-105"
+              >
+                {link.label}
+              </a>
+            ))}
           </nav>
 
-          <div className="hidden items-center gap-4 lg:flex">
+          <div className="hidden items-center gap-3 lg:flex">
             <a
               href={`https://wa.me/${company.whatsapp.replace(/\D/g, "")}`}
-              className="rounded-full bg-orange-600 px-6 py-3 text-[13px] font-bold uppercase tracking-widest text-white shadow-lg shadow-orange-200/50 transition hover:-translate-y-1 hover:bg-orange-700"
+              className="rounded-full bg-orange-600 px-5 py-2.5 text-[11px] font-bold uppercase tracking-widest text-white shadow-lg shadow-orange-200/50 transition hover:bg-orange-700"
+            >
+              Quote
+            </a>
+          </div>
+
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100 text-slate-900 transition hover:bg-orange-600 hover:text-white lg:hidden flex-shrink-0"
+            aria-label="Toggle menu"
+          >
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              {isMobileMenuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
+        </Container>
+      </header>
+
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden" onClick={() => setIsMobileMenuOpen(false)} />
+      )}
+
+      {isMobileMenuOpen && (
+        <div className="fixed inset-y-0 right-0 z-40 w-full sm:w-80 bg-white shadow-2xl flex flex-col lg:hidden overflow-y-auto">
+          <div className="flex items-center justify-between p-6 border-b border-slate-100">
+            <h2 className="text-lg font-black uppercase tracking-tight text-slate-900">Menu</h2>
+            <button
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100 text-slate-900 transition hover:bg-orange-600 hover:text-white"
+              aria-label="Close menu"
+            >
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <nav className="flex-1 space-y-3 p-6 pt-4">
+            {navLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={(e) => {
+                  scrollToSection(e, link.href);
+                  setIsMobileMenuOpen(false);
+                }}
+                className="block px-6 py-5 text-base font-bold uppercase tracking-wider text-slate-700 transition hover:text-orange-600 hover:bg-orange-50 rounded-xl bg-slate-50 border-l-4 border-l-transparent hover:border-l-orange-600"
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
+
+          <div className="border-t border-slate-100 p-6 pt-4">
+            <a
+              href={`https://wa.me/${company.whatsapp.replace(/\D/g, "")}`}
+              className="flex items-center justify-center rounded-full bg-gradient-to-r from-orange-600 to-red-600 px-8 py-4 text-center text-sm font-bold uppercase tracking-widest text-white shadow-xl shadow-orange-300/50 transition hover:shadow-2xl hover:from-orange-700 hover:to-red-700 w-full"
             >
               Get a Quote
             </a>
           </div>
-        </Container>
-      </header>
+        </div>
+      )}
+
+      <div className="h-16" />
 
       <section id="top" className="relative pb-20 pt-12 sm:pt-20 lg:pt-28">
         <Container className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
@@ -187,11 +290,11 @@ export function BusinessHomepage({ initialCatalog }: BusinessHomepageProps) {
             </div>
 
             <h1 className="mt-8 text-5xl font-black leading-[0.9] tracking-tighter text-slate-950 sm:text-6xl lg:text-7xl">
-              PREMIUM SAFETY <span className="text-orange-600">SIGNBOARDS</span>
+              FABRICATION & <span className="text-orange-600">RETROREFLECTIVE BOARDS</span>
             </h1>
 
             <p className="mt-8 max-w-lg text-lg font-medium leading-relaxed text-slate-700">
-              AKB manufactures and installs high-visibility safety signboards for national highways, industrial plants, warehouses, and construction zones across India.
+              MATOSHREE ENGINEERING manufactures and installs all types of fabrication works and high-visibility retroreflective sign boards for national highways, industrial plants, warehouses, and construction zones across India.
             </p>
 
             <ul className="mt-8 max-w-lg space-y-4">
@@ -232,7 +335,7 @@ export function BusinessHomepage({ initialCatalog }: BusinessHomepageProps) {
             className="relative h-[500px] lg:h-[600px]"
           >
             <div className="absolute inset-0 flex items-center justify-center overflow-hidden rounded-[3rem] bg-gradient-to-b from-slate-100 to-slate-50 shadow-2xl">
-              <img src="/images/hero-bg.png" alt="AKB Safety Signboards" className="h-full w-full object-cover" />
+              <img src="/images/hero-bg.png" alt="MATOSHREE ENGINEERING Retroreflective Boards" className="h-full w-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900/30 via-transparent to-transparent" />
               <div className="absolute bottom-8 left-8 right-8 text-white">
                 <p className="text-3xl font-black italic leading-tight">Safety First,</p>
@@ -273,7 +376,7 @@ export function BusinessHomepage({ initialCatalog }: BusinessHomepageProps) {
           <SectionTitle
             eyebrow="Product Catalogue"
             title="Safety Signboard Solutions for Every Need"
-            text="From highway traffic boards to industrial safety signage and construction zone warnings, explore AKB's current product range managed from the dashboard and served through the website catalog."
+            text="From highway traffic boards to industrial safety signage and construction zone warnings, explore MATOSHREE ENGINEERING's current product range managed from the dashboard and served through the website catalog."
           />
 
           <div className="mt-10 grid gap-6 lg:grid-cols-3">
@@ -289,7 +392,7 @@ export function BusinessHomepage({ initialCatalog }: BusinessHomepageProps) {
           <SectionTitle
             eyebrow="Portfolio of Excellence"
             title="Real-World Safety Signboard Projects"
-            text="AKB has successfully executed signage projects across major highways, industrial complexes, and construction sites. Each project demonstrates our commitment to quality, safety, and on-time delivery."
+            text="MATOSHREE ENGINEERING has successfully executed fabrication and signage projects across major highways, industrial complexes, and construction sites. Each project demonstrates our commitment to quality, safety, and on-time delivery."
           />
 
           <div className="mt-16 grid gap-8 lg:grid-cols-3">
@@ -346,7 +449,7 @@ export function BusinessHomepage({ initialCatalog }: BusinessHomepageProps) {
           <SectionTitle
             eyebrow="Our Services"
             title="End-to-End Signage Solutions"
-            text="From concept to installation, AKB manages every aspect of your signage project. Our comprehensive services ensure visibility, compliance, and long-term durability."
+            text="From concept to installation, MATOSHREE ENGINEERING manages every aspect of your fabrication and signage project. Our comprehensive services ensure visibility, compliance, and long-term durability."
           />
 
           <div className="grid gap-6 sm:grid-cols-2">
@@ -383,7 +486,7 @@ export function BusinessHomepage({ initialCatalog }: BusinessHomepageProps) {
               CONSULTATION TO <span className="text-orange-500">INSTALLATION</span>
             </h2>
             <p className="mt-6 text-lg leading-relaxed text-slate-400">
-              AKB follows a proven four-step process to deliver signage solutions that meet your exact requirements and safety standards.
+            text="MATOSHREE ENGINEERING follows a proven four-step process to deliver fabrication and signage solutions that meet your exact requirements and safety standards."
             </p>
           </div>
 
@@ -424,7 +527,7 @@ export function BusinessHomepage({ initialCatalog }: BusinessHomepageProps) {
                   Ready to enhance <span className="text-orange-500">safety?</span>
                 </h2>
                 <p className="mt-8 max-w-xl text-lg font-medium text-slate-400">
-                  Contact AKB today for a free consultation, site survey, or custom quote.
+                  Contact MATOSHREE ENGINEERING today for a free consultation, site survey, or custom quote."
                   Our team is ready to support your signage project from start to finish.
                 </p>
 

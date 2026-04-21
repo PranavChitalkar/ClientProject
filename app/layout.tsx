@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AKB - Premium Safety Signboards | Road, Industrial & Construction Boards",
+  title: "MATOSHREE ENGINEERING - Fabrication & Retroreflective Sign Boards Manufacturing",
   description:
-    "AKB manufactures and installs high-quality safety signboards for highways, industrial plants, warehouses, and construction zones. Expert road safety solutions since 2011.",
+    "MATOSHREE ENGINEERING manufactures and installs all types of fabrication works and retroreflective sign boards for highways, industrial plants, warehouses, and construction zones. Expert fabrication solutions since 2011.",
 };
 
 export default function RootLayout({

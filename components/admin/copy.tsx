@@ -634,7 +634,7 @@ export function AdminDashboard({ initialSnapshot }: AdminDashboardProps) {
           <div>
             <div className="mb-2 flex items-center gap-3">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-red-600 text-xs font-black text-white">
-                AKB
+                ME
               </div>
               <p className="text-sm font-semibold uppercase tracking-[0.28em] text-orange-600">Admin Dashboard</p>
             </div>
